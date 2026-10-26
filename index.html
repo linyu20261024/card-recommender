@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>消费优惠与用卡推荐</title>
+<style>
+:root{--primary:#0f766e;--primary2:#115e59;--bg:#f4f7f8;--line:#dfe7e8;--ink:#172b2b;--muted:#667779;--green:#dcfce7;--amber:#fff7d6;--red:#fee2e2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
+header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:26px 16px 22px}header .wrap{max-width:1050px;margin:auto}h1{font-size:24px;margin:0 0 5px}header p{margin:0;color:#d5f5ef;font-size:13px}
+.wrap{max-width:1050px;margin:auto;padding:14px}.notice{padding:11px 13px;border-radius:10px;background:#e8f5f3;color:#205b57;font-size:13px;margin-bottom:13px;border:1px solid #c9e7e2}
+.tabs{display:flex;gap:7px;overflow:auto;margin-bottom:14px}.tab,button{font:inherit;font-weight:650;cursor:pointer;border:0;border-radius:9px;padding:10px 13px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line)}.tab.on,button.primary{background:var(--primary);color:#fff}button.secondary{background:#e9eff0;color:#284344}button.danger{background:var(--red);color:#991b1b}button.small{padding:6px 9px;font-size:12px}
+.panel{display:none}.panel.on{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px;box-shadow:0 2px 7px #102b2b08}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 7px}.muted,.help{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{min-width:0}.full{grid-column:1/-1}label{display:block;font-weight:650;font-size:13px;margin-bottom:5px}input,select,textarea{width:100%;min-height:41px;border:1px solid #c8d4d5;border-radius:8px;padding:9px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:70px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:13px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}.stat span{display:block;font-size:12px;color:var(--muted)}.stat strong{font-size:22px}.recommendation{border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0;background:#fff}.rec-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.rec-title{font-weight:750;font-size:16px}.rank{background:#e0f2f1;color:#115e59;border-radius:7px;padding:3px 7px;font-size:12px;white-space:nowrap}.money{font-size:24px;font-weight:800;color:#087f5b;margin:7px 0}.pill{display:inline-block;background:#edf2f2;border-radius:99px;padding:3px 8px;font-size:11px;margin:3px 4px 0 0}.pill.good{background:var(--green);color:#166534}.pill.warn{background:var(--amber);color:#854d0e}.reason{font-size:13px;color:#526566;margin:7px 0}.feedback{background:#f7faf9;border-radius:10px;padding:11px;margin-top:10px}.feedback[hidden]{display:none}.empty{text-align:center;padding:24px;color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px 7px;border-bottom:1px solid #e8eeee;text-align:left;vertical-align:top}.tablewrap{overflow:auto}.status{font-size:13px;margin:8px 0}.status.ok{color:#087f5b}.status.bad{color:#b42318}.rule-item{padding:12px 0;border-bottom:1px solid #edf0f0}.rule-item:last-child{border-bottom:0}.hidden{display:none!important}
+@media(min-width:720px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding:20px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:440px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.rec-head{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>消费用卡优惠推荐</h1><p>独立工具 · 按消费平台、支付渠道和场景匹配优惠，记录实际省钱</p></div></header>
+<main class="wrap">
+<div class="notice">试用说明：数据仅保存在本浏览器的独立存储空间，不与周期任务页面共用。当前内置 1 条「支付宝超级出行卡」示例规则；其活动有效期尚未确认，因此页面会提示核实。建议先用小额场景测试推荐、反馈和数据导出。</div>
+<nav class="tabs">
+<button class="tab on" data-tab="recommend">场景推荐</button><button class="tab" data-tab="rules">优惠规则</button><button class="tab" data-tab="history">使用反馈</button><button class="tab" data-tab="data">数据备份</button>
+</nav>
+<section class="panel on" id="panel-recommend">
+<div class="card">
+<h2>本次消费场景</h2>
+<div class="grid">
+<div class="field"><label for="spend">预计消费金额（元）</label><input id="spend" type="number" min="0" step="0.01" value="4" /></div>
+<div class="field"><label for="scene">消费场景</label><select id="scene"><option value="subway">地铁 / 公共交通</option><option value="bus">公交</option><option value="dining">餐饮</option><option value="shopping">购物</option><option value="online">线上消费</option><option value="other">其他</option></select></div>
+<div class="field"><label for="platform">消费平台 / 商户</label><select id="platform"><option value="any">不限 / 未指定</option><option value="jd">京东</option><option value="vip">唯品会</option><option value="taobao">淘宝</option><option value="tmall">天猫</option><option value="douyin-shop">抖音商城</option><option value="pdd">拼多多</option><option value="supermarket">线下商超</option><option value="convenience">便利店</option><option value="restaurant">餐饮商户</option><option value="transport">交通出行</option><option value="gas">加油 / 充电</option><option value="other">其他平台 / 商户</option></select></div>
+<div class="field"><label for="channel">支付渠道 / 方式</label><select id="channel"><option value="any">不限 / 未指定</option><option value="alipay">支付宝</option><option value="wechat">微信支付</option><option value="unionpay">云闪付</option><option value="bestpay">翼支付</option><option value="bank-app">银行 App</option><option value="douyin-pay">抖音支付</option><option value="jd-pay">京东支付</option><option value="apple-pay">Apple Pay / 手机 Pay</option><option value="card">银行卡直接刷卡</option><option value="transit-code">乘车码 / 出行码</option><option value="other">其他自定义渠道</option></select></div>
+<div class="field"><label for="when">消费日期时间</label><input id="when" type="datetime-local" /></div>
+<div class="field"><label for="extraCost">为获得优惠额外成本（元）</label><input id="extraCost" type="number" min="0" step="0.01" value="0" /></div>
+</div>
+<div class="help" style="margin-top:8px">日期时间默认取当前设备时间，可手动修改。推荐金额按“现金优惠 + 可估值权益 − 额外成本”计算；规则不满足时会说明原因。</div>
+<div class="actions"><button class="primary" id="runRecommend">重新计算推荐</button><button class="secondary" id="resetScene">恢复默认场景</button></div>
+</div>
+<div class="stats">
+<div class="stat"><span>符合场景的规则</span><strong id="eligibleCount">0</strong></div><div class="stat"><span>当前最高预期净收益</span><strong id="bestSaving">¥0.00</strong></div><div class="stat"><span>已确认实际省钱</span><strong id="actualSaving">¥0.00</strong></div><div class="stat"><span>已记录反馈</span><strong id="feedbackCount">0</strong></div>
+</div>
+<div class="card"><h2>推荐结果（按预期净收益排序）</h2><div class="muted">预期值不等于实际到账；规则有效期、资格、名额等未确认时会标注提醒。</div><div id="recommendations"></div></div>
+</section>
+<section class="panel" id="panel-rules">
+<div class="card"><h2>已保存的优惠规则</h2><div class="muted">可添加规则用于试用。第一版支持现金折扣、固定立减；消费平台与支付渠道分开设置；目前提供常见选项，其他选项可用于过渡，后续可继续加入自定义项目。更复杂的积分/礼品估值后续再扩展。</div><div id="ruleList"></div></div>
+<div class="card">
+<h2 id="ruleFormTitle">新增优惠规则</h2>
+<form id="ruleForm">
+<input type="hidden" id="ruleId">
+<div class="grid">
+<div class="field"><label for="rName">活动名称 *</label><input id="rName" required placeholder="例如：周末餐饮立减" /></div>
+<div class="field"><label for="rPlatform">适用消费平台 / 商户</label><select id="rPlatform"><option value="any">不限</option><option value="jd">京东</option><option value="vip">唯品会</option><option value="taobao">淘宝</option><option value="tmall">天猫</option><option value="douyin-shop">抖音商城</option><option value="pdd">拼多多</option><option value="supermarket">线下商超</option><option value="convenience">便利店</option><option value="restaurant">餐饮商户</option><option value="transport">交通出行</option><option value="gas">加油 / 充电</option><option value="other">其他平台 / 商户</option></select></div>
+<div class="field"><label for="rScene">适用场景</label><select id="rScene"><option value="subway">地铁 / 公共交通</option><option value="bus">公交</option><option value="dining">餐饮</option><option value="shopping">购物</option><option value="online">线上消费</option><option value="other">其他</option><option value="any">不限</option></select></div>
+<div class="field"><label for="rChannel">适用支付渠道</label><select id="rChannel"><option value="any">不限</option><option value="alipay">支付宝</option><option value="wechat">微信支付</option><option value="unionpay">云闪付</option><option value="bestpay">翼支付</option><option value="bank-app">银行 App</option><option value="douyin-pay">抖音支付</option><option value="jd-pay">京东支付</option><option value="apple-pay">Apple Pay / 手机 Pay</option><option value="card">银行卡直接刷卡</option><option value="transit-code">乘车码 / 出行码</option><option value="other">其他自定义渠道</option></select></div>
+<div class="field"><label for="rType">优惠类型</label><select id="rType"><option value="rate">按比例优惠</option><option value="fixed">固定立减</option></select></div>
+<div class="field"><label for="rRate">优惠比例（%）</label><input id="rRate" type="number" min="0" max="100" step="0.1" value="50" /></div>
+<div class="field"><label for="rCap">最高优惠金额（元）</label><input id="rCap" type="number" min="0" step="0.01" value="2" /></div>
+<div class="field"><label for="rMin">最低消费金额（元）</label><input id="rMin" type="number" min="0" step="0.01" value="0" /></div>
+<div class="field"><label for="rFixed">固定立减金额（元）</label><input id="rFixed" type="number" min="0" step="0.01" value="1" /></div>
+<div class="field"><label for="rStart">每日开始时间</label><input id="rStart" type="time" value="06:30" /></div>
+<div class="field"><label for="rEnd">每日结束时间</label><input id="rEnd" type="time" value="10:00" /></div>
+<div class="field"><label for="rLimit">每日可用次数</label><input id="rLimit" type="number" min="1" step="1" value="1" /></div>
+<div class="field full"><label for="rNotes">规则备注 / 待确认事项</label><textarea id="rNotes" placeholder="例如：活动有效期、是否需领券、是否需报名、总名额等"></textarea></div>
+</div>
+<div class="actions"><button class="primary" type="submit">保存规则</button><button class="secondary" type="button" id="cancelEdit">清空表单</button></div><div id="ruleStatus" class="status"></div>
+</form>
+</div>
+</section>
+<section class="panel" id="panel-history">
+<div class="card"><h2>使用反馈记录</h2><p class="muted">只有选择“已使用并确认优惠”并填写实际省钱金额的记录，才计入实际省钱统计。未生效或改用其他方式不会计入。</p><div class="tablewrap"><table><thead><tr><th>时间</th><th>规则 / 场景</th><th>反馈</th><th>实际省钱</th><th>备注</th><th></th></tr></thead><tbody id="historyRows"></tbody></table></div><div id="historyEmpty" class="empty">还没有反馈记录。</div></div>
+</section>
+<section class="panel" id="panel-data">
+<div class="card"><h2>数据备份与恢复</h2><p class="muted">此网站使用独立存储键 card-recommender-v1。不会读取或写入待办事项页面的数据。建议定期导出备份。</p><div class="actions"><button class="primary" id="exportBtn">导出 JSON 备份</button><button class="secondary" id="importBtn">导入 JSON 备份</button><button class="danger" id="clearBtn">清空本工具数据</button><input class="hidden" id="importFile" type="file" accept="application/json,.json"></div><div id="dataStatus" class="status"></div></div>
+</section>
+</main>
+<script>
+(() => {
+'use strict';
+const STORAGE_KEY = 'card-recommender-v1';
+const $ = id => document.getElementById(id);
+const nowLocal = () => { const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); };
+const money = n => '¥' + (Number(n)||0).toFixed(2);
+const fmtDate = s => s ? new Date(s).toLocaleString('zh-CN',{hour12:false}) : '—';
+const sceneNames = {subway:'地铁 / 公共交通',bus:'公交',dining:'餐饮',shopping:'购物',online:'线上消费',other:'其他',any:'不限'};
+const platformNames = {jd:'京东',vip:'唯品会',taobao:'淘宝',tmall:'天猫','douyin-shop':'抖音商城',pdd:'拼多多',supermarket:'线下商超',convenience:'便利店',restaurant:'餐饮商户',transport:'交通出行',gas:'加油 / 充电',other:'其他平台 / 商户',any:'不限 / 未指定'};
+const channelNames = {alipay:'支付宝',wechat:'微信支付',unionpay:'云闪付',bestpay:'翼支付','bank-app':'银行 App','douyin-pay':'抖音支付','jd-pay':'京东支付','apple-pay':'Apple Pay / 手机 Pay',card:'银行卡直接刷卡','transit-code':'乘车码 / 出行码',other:'其他自定义渠道',any:'不限 / 未指定'};
+const defaultRule = {id:'rule-super-transit',name:'支付宝超级出行卡',platform:'transport',scene:'subway',channel:'alipay',type:'rate',rate:50,cap:2,min:0,fixed:0,start:'06:30',end:'10:00',limit:1,notes:'已知规则：交通出行中的地铁场景，支付渠道为支付宝，06:30–10:00，五折，最高优惠 2 元，每天 1 次。活动有效期、用户资格及是否需要额外领取/报名尚待确认。',createdAt:new Date().toISOString()};
+function initialState(){return {version:1,rules:[defaultRule],feedback:[],lastUpdated:new Date().toISOString()};}
+function load(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(x&&Array.isArray(x.rules)&&Array.isArray(x.feedback))return x;}catch(e){}return initialState();}
+let state=load();
+function save(){state.lastUpdated=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function switchTab(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='panel-'+name));if(name==='rules')renderRules();if(name==='history')renderHistory();if(name==='recommend')renderRecommendations();}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+$('when').value=nowLocal();$('platform').value='transport';$('channel').value='alipay';
+function getScene(){return {amount:Math.max(0,Number($('spend').value)||0),scene:$('scene').value,platform:$('platform').value,channel:$('channel').value,when:$('when').value,extraCost:Math.max(0,Number($('extraCost').value)||0)};}
+function inDailyWindow(when,start,end){if(!start&&!end)return true;const hm=when.slice(11,16);if(!hm)return false;if(start<=end)return hm>=start&&hm<=end;return hm>=start||hm<=end;}
+function calc(rule, s){
+ let reasons=[], eligible=true;
+ if(rule.platform!=='any'&&rule.platform!==s.platform){eligible=false;reasons.push('支付平台不匹配：需要'+platformNames[rule.platform]);}
+ if(rule.scene!=='any'&&rule.scene!==s.scene){eligible=false;reasons.push('消费场景不匹配：需要'+sceneNames[rule.scene]);}
+ if(rule.channel!=='any'&&rule.channel!==s.channel){eligible=false;reasons.push('支付渠道不匹配：需要'+channelNames[rule.channel]);}
+ if(s.amount<Number(rule.min||0)){eligible=false;reasons.push('未达到最低消费 '+money(rule.min));}
+ if(!inDailyWindow(s.when,rule.start,rule.end)){eligible=false;reasons.push('不在每日活动时段 '+(rule.start||'00:00')+'–'+(rule.end||'23:59'));}
+ let discount=0;
+ if(eligible){discount=rule.type==='fixed'?Math.min(s.amount,Number(rule.fixed)||0):Math.min(s.amount*(Number(rule.rate)||0)/100,Number(rule.cap)||0);discount=Math.max(0,discount);}
+ const net=Math.max(0,discount-s.extraCost);
+ return {eligible,discount,net,reasons};
+}
+function renderRecommendations(){
+ const s=getScene(); const results=state.rules.map(r=>({rule:r,...calc(r,s)})).sort((a,b)=>b.net-a.net);
+ const eligible=results.filter(x=>x.eligible);$('eligibleCount').textContent=eligible.length;
+ $('bestSaving').textContent=money(eligible.length?eligible[0].net:0);
+ $('actualSaving').textContent=money(state.feedback.filter(f=>f.confirmed).reduce((sum,f)=>sum+(Number(f.actual)||0),0));
+ $('feedbackCount').textContent=state.feedback.length;
+ const root=$('recommendations');
+ if(!results.length){root.innerHTML='<div class="empty">还没有优惠规则，请到“优惠规则”添加。</div>';return;}
+ root.innerHTML=results.map((x,i)=>{
+ const r=x.rule, warn=r.id==='rule-super-transit'?'活动有效期、资格及领券/报名条件待确认。':'请确认活动有效期、资格、名额和叠加规则。';
+ const calcText=r.type==='fixed'?'固定立减 '+money(r.fixed)+'，不超过消费金额':'消费金额 × '+(Number(r.rate)||0)+'%，封顶 '+money(r.cap);
+ return `<article class="recommendation"><div class="rec-head"><div><div class="rec-title">${esc(r.name)}</div><div class="muted">${esc(platformNames[r.platform]||r.platform)} · ${esc(sceneNames[r.scene]||r.scene)} · ${esc(channelNames[r.channel]||r.channel)}</div></div><span class="rank">${x.eligible?'预期净收益排名 #'+(eligible.indexOf(x)+1):'当前不适用'}</span></div>
+ <div class="money">${x.eligible?money(x.net):'—'} <span style="font-size:12px;font-weight:500;color:#667779">预期净收益</span></div>
+ <div><span class="pill ${x.eligible?'good':'warn'}">${x.eligible?'符合当前条件':'条件未满足'}</span><span class="pill">预期优惠 ${money(x.discount)}</span><span class="pill">额外成本 ${money(s.extraCost)}</span></div>
+ <div class="reason">${x.eligible?'计算依据：'+calcText+'；消费 '+money(s.amount)+'，预计优惠 '+money(x.discount)+'，扣除额外成本后 '+money(x.net)+'。':esc(x.reasons.join('；'))}</div>
+ <div class="reason"><strong>使用限制：</strong>${esc(r.start||'全天')}–${esc(r.end||'全天')}；每天最多 ${Number(r.limit)||1} 次。${esc(r.notes||'暂无补充备注')}</div>
+ <div class="actions"><button class="primary small" data-feedback="${escAttr(r.id)}" ${x.eligible?'':'disabled style="opacity:.45;cursor:not-allowed"'}>选择此方案并反馈</button><button class="secondary small" data-edit="${escAttr(r.id)}">编辑规则</button></div>
+ <div class="feedback" id="feedback-${escAttr(r.id)}" hidden><h3>记录本次使用情况：${esc(r.name)}</h3><div class="grid">
+ <div class="field"><label>使用结果</label><select id="fb-result-${escAttr(r.id)}"><option value="confirmed">已使用并确认优惠</option><option value="used-unknown">已使用，优惠金额待确认</option><option value="failed">优惠未生效</option><option value="switched">改用其他卡 / 方式</option><option value="not-used">最后未使用</option></select></div>
+ <div class="field"><label>实际省钱金额（元）</label><input id="fb-actual-${escAttr(r.id)}" type="number" min="0" step="0.01" value="${x.discount.toFixed(2)}"></div>
+ <div class="field full"><label>备注（可选）</label><input id="fb-note-${escAttr(r.id)}" placeholder="例如实际扣款、优惠券到账、失败原因"></div></div>
+ <div class="actions"><button class="primary small" data-save-feedback="${escAttr(r.id)}">保存反馈</button><button class="secondary small" data-cancel-feedback="${escAttr(r.id)}">取消</button></div>
+ <div class="help">“已使用并确认优惠”才计入实际省钱统计。实际金额请填写实际兑现的现金优惠，不要填写预期金额（除非确实一致）。</div></div></article>`;
+ }).join('');
+ root.querySelectorAll('[data-feedback]').forEach(b=>b.addEventListener('click',()=>{const box=$('feedback-'+b.dataset.feedback);box.hidden=!box.hidden;}));
+ root.querySelectorAll('[data-cancel-feedback]').forEach(b=>b.addEventListener('click',()=>{$('feedback-'+b.dataset.cancelFeedback).hidden=true;}));
+ root.querySelectorAll('[data-save-feedback]').forEach(b=>b.addEventListener('click',()=>saveFeedback(b.dataset.saveFeedback,s)));
+ root.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{editRule(b.dataset.edit);switchTab('rules');}));
+}
+function saveFeedback(ruleId,s){
+ const rule=state.rules.find(r=>r.id===ruleId);if(!rule)return;
+ const result=$('fb-result-'+ruleId).value, actual=Math.max(0,Number($('fb-actual-'+ruleId).value)||0);
+ const confirmed=result==='confirmed';
+ state.feedback.unshift({id:uid(),ruleId,ruleName:rule.name,scene:sceneNames[s.scene],platform:platformNames[s.platform],amount:s.amount,expected:calc(rule,s).discount,actual:confirmed?actual:0,confirmed,result,when:s.when,feedbackAt:new Date().toISOString(),note:$('fb-note-'+ruleId).value.trim()});
+ save();renderRecommendations();renderHistory();$('dataStatus').textContent='反馈已保存。';alert('反馈已保存'+(confirmed?'，实际省钱 '+money(actual)+' 已计入统计。':'，该记录不会计入已确认实际省钱统计。'));
+}
+function renderRules(){
+ const root=$('ruleList');if(!state.rules.length){root.innerHTML='<div class="empty">暂无规则。</div>';return;}
+ root.innerHTML=state.rules.map(r=>`<div class="rule-item"><div class="rec-head"><div><strong>${esc(r.name)}</strong><div class="muted">${esc(platformNames[r.platform]||r.platform)} · ${esc(sceneNames[r.scene]||r.scene)} · ${esc(channelNames[r.channel]||r.channel)}</div></div><div>${r.type==='fixed'?'立减 '+money(r.fixed):((Number(r.rate)||0)+'% 封顶 '+money(r.cap))}</div></div><div class="muted">最低消费 ${money(r.min)}；时段 ${esc(r.start||'全天')}–${esc(r.end||'全天')}；每天 ${Number(r.limit)||1} 次</div><div class="muted">${esc(r.notes||'无备注')}</div><div class="actions"><button class="secondary small" data-edit="${escAttr(r.id)}">编辑</button><button class="danger small" data-delete="${escAttr(r.id)}">删除</button></div></div>`).join('');
+ root.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>editRule(b.dataset.edit)));
+ root.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{if(confirm('确定删除这条规则？历史反馈记录会保留。')){state.rules=state.rules.filter(r=>r.id!==b.dataset.delete);save();renderRules();renderRecommendations();}}));
+}
+function editRule(id){
+ const r=state.rules.find(x=>x.id===id);if(!r)return;
+ $('ruleId').value=r.id;$('rName').value=r.name;$('rPlatform').value=r.platform;$('rScene').value=r.scene;$('rChannel').value=r.channel;$('rType').value=r.type;$('rRate').value=r.rate??50;$('rCap').value=r.cap??2;$('rMin').value=r.min??0;$('rFixed').value=r.fixed??1;$('rStart').value=r.start||'';$('rEnd').value=r.end||'';$('rLimit').value=r.limit||1;$('rNotes').value=r.notes||'';$('ruleFormTitle').textContent='编辑优惠规则';switchTab('rules');window.scrollTo({top:document.getElementById('ruleForm').getBoundingClientRect().top+window.scrollY-20,behavior:'smooth'});
+}
+function clearForm(){$('ruleForm').reset();$('ruleId').value='';$('rRate').value=50;$('rCap').value=2;$('rMin').value=0;$('rFixed').value=1;$('rStart').value='06:30';$('rEnd').value='10:00';$('rLimit').value=1;$('ruleFormTitle').textContent='新增优惠规则';}
+$('ruleForm').addEventListener('submit',e=>{e.preventDefault();const id=$('ruleId').value||uid();const r={id,name:$('rName').value.trim(),platform:$('rPlatform').value,scene:$('rScene').value,channel:$('rChannel').value,type:$('rType').value,rate:Number($('rRate').value)||0,cap:Number($('rCap').value)||0,min:Number($('rMin').value)||0,fixed:Number($('rFixed').value)||0,start:$('rStart').value,end:$('rEnd').value,limit:Math.max(1,Number($('rLimit').value)||1),notes:$('rNotes').value.trim()};const ix=state.rules.findIndex(x=>x.id===id);if(ix>=0)state.rules[ix]=r;else state.rules.push(r);save();clearForm();$('ruleStatus').textContent='规则已保存。';$('ruleStatus').className='status ok';renderRules();renderRecommendations();});
+$('cancelEdit').addEventListener('click',clearForm);
+$('runRecommend').addEventListener('click',renderRecommendations);
+['spend','scene','platform','channel','when','extraCost'].forEach(id=>$(id).addEventListener('change',renderRecommendations));
+$('resetScene').addEventListener('click',()=>{$('spend').value=4;$('scene').value='subway';$('platform').value='transport';$('channel').value='alipay';$('when').value=nowLocal();$('extraCost').value=0;renderRecommendations();});
+function renderHistory(){
+ const rows=$('historyRows');rows.innerHTML=state.feedback.map(f=>`<tr><td>${esc(fmtDate(f.when))}</td><td><strong>${esc(f.ruleName)}</strong><br>${esc(f.scene||'')}<br><span class="muted">消费 ${money(f.amount)} / 预期优惠 ${money(f.expected)}</span></td><td>${esc(({confirmed:'已使用并确认优惠','used-unknown':'已使用，金额待确认',failed:'优惠未生效',switched:'改用其他方式','not-used':'最后未使用'})[f.result]||f.result)}</td><td>${f.confirmed?money(f.actual):'—'}</td><td>${esc(f.note||'')}</td><td><button class="danger small" data-del-feedback="${escAttr(f.id)}">删除</button></td></tr>`).join('');
+ $('historyEmpty').classList.toggle('hidden',state.feedback.length>0);
+ rows.querySelectorAll('[data-del-feedback]').forEach(b=>b.addEventListener('click',()=>{if(confirm('删除这条反馈记录？')){state.feedback=state.feedback.filter(f=>f.id!==b.dataset.delFeedback);save();renderHistory();renderRecommendations();}}));
+ $('actualSaving').textContent=money(state.feedback.filter(f=>f.confirmed).reduce((sum,f)=>sum+(Number(f.actual)||0),0));$('feedbackCount').textContent=state.feedback.length;
+}
+$('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='card-recommender-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);$('dataStatus').textContent='备份已生成。';});
+$('importBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.rules)||!Array.isArray(x.feedback))throw new Error('文件结构不正确');if(!confirm('导入会覆盖本工具当前规则和反馈，建议先导出备份。继续吗？'))return;state={version:1,rules:x.rules,feedback:x.feedback,lastUpdated:new Date().toISOString()};save();renderRules();renderHistory();renderRecommendations();$('dataStatus').textContent='导入成功。';}catch(err){$('dataStatus').textContent='导入失败：'+err.message;}finally{e.target.value='';}});
+$('clearBtn').addEventListener('click',()=>{if(confirm('确定清空本工具的全部规则和反馈？此操作不可撤销。')){state=initialState();save();clearForm();renderRules();renderHistory();renderRecommendations();$('dataStatus').textContent='已恢复初始规则，反馈已清空。';}});
+function uid(){return 'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escAttr(s){return esc(s);}
+renderRecommendations();renderRules();renderHistory();save();
+})();
+</script>
+</body>
+</html>
