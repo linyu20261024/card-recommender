@@ -11,7 +11,7 @@
 header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:26px 16px 22px}header .wrap{max-width:1050px;margin:auto}h1{font-size:24px;margin:0 0 5px}header p{margin:0;color:#d5f5ef;font-size:13px}
 .wrap{max-width:1050px;margin:auto;padding:14px}.notice{padding:11px 13px;border-radius:10px;background:#e8f5f3;color:#205b57;font-size:13px;margin-bottom:13px;border:1px solid #c9e7e2}
 .tabs{display:flex;gap:7px;overflow:auto;margin-bottom:14px}.tab,button{font:inherit;font-weight:650;cursor:pointer;border:0;border-radius:9px;padding:10px 13px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line)}.tab.on,button.primary{background:var(--primary);color:#fff}button.secondary{background:#e9eff0;color:#284344}button.danger{background:var(--red);color:#991b1b}button.small{padding:6px 9px;font-size:12px}
-.panel{display:none}.panel.on{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px;box-shadow:0 2px 7px #102b2b08}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 7px}.muted,.help{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{min-width:0}.full{grid-column:1/-1}label{display:block;font-weight:650;font-size:13px;margin-bottom:5px}input,select,textarea{width:100%;min-height:41px;border:1px solid #c8d4d5;border-radius:8px;padding:9px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:70px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.panel{display:none}.panel.on{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px;box-shadow:0 2px 7px #102b2b08}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 7px}.muted,.help{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{min-width:0}.full{grid-column:1/-1}.checkgroup{display:flex;flex-wrap:wrap;gap:8px;padding:8px;border:1px solid #c8d4d5;border-radius:8px;min-height:41px}.checkgroup label{display:flex;align-items:center;gap:5px;margin:0;font-weight:500}.checkgroup input{width:auto;min-height:auto;margin:0}label{display:block;font-weight:650;font-size:13px;margin-bottom:5px}input,select,textarea{width:100%;min-height:41px;border:1px solid #c8d4d5;border-radius:8px;padding:9px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:70px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:13px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}.stat span{display:block;font-size:12px;color:var(--muted)}.stat strong{font-size:22px}.recommendation{border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0;background:#fff}.rec-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.rec-title{font-weight:750;font-size:16px}.rank{background:#e0f2f1;color:#115e59;border-radius:7px;padding:3px 7px;font-size:12px;white-space:nowrap}.money{font-size:24px;font-weight:800;color:#087f5b;margin:7px 0}.pill{display:inline-block;background:#edf2f2;border-radius:99px;padding:3px 8px;font-size:11px;margin:3px 4px 0 0}.pill.good{background:var(--green);color:#166534}.pill.warn{background:var(--amber);color:#854d0e}.reason{font-size:13px;color:#526566;margin:7px 0}.feedback{background:#f7faf9;border-radius:10px;padding:11px;margin-top:10px}.feedback[hidden]{display:none}.empty{text-align:center;padding:24px;color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px 7px;border-bottom:1px solid #e8eeee;text-align:left;vertical-align:top}.tablewrap{overflow:auto}.status{font-size:13px;margin:8px 0}.status.ok{color:#087f5b}.status.bad{color:#b42318}.rule-item{padding:12px 0;border-bottom:1px solid #edf0f0}.rule-item:last-child{border-bottom:0}.hidden{display:none!important}
 @media(min-width:720px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding:20px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:440px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.rec-head{align-items:flex-start}}
@@ -29,7 +29,7 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:26p
 <h2>本次消费场景</h2>
 <div class="grid">
 <div class="field"><label for="spend">预计消费金额（元）</label><input id="spend" type="number" min="0" step="0.01" value="4" /></div>
-<div class="field"><label for="scene">消费场景</label><select id="scene"><option value="subway">地铁 / 公共交通</option><option value="bus">公交</option><option value="dining">餐饮</option><option value="shopping">购物</option><option value="online">线上消费</option><option value="other">其他</option></select></div>
+<div class="field"><label for="scene">消费场景</label><select id="scene"><option value="subway">地铁</option><option value="bus">公交</option><option value="dining">餐饮</option><option value="shopping">购物</option><option value="online">线上消费</option><option value="other">其他</option></select></div>
 <div class="field"><label for="platform">消费平台 / 商户</label><select id="platform"><option value="any">不限 / 未指定</option><option value="jd">京东</option><option value="vip">唯品会</option><option value="taobao">淘宝</option><option value="tmall">天猫</option><option value="douyin-shop">抖音商城</option><option value="pdd">拼多多</option><option value="supermarket">线下商超</option><option value="convenience">便利店</option><option value="restaurant">餐饮商户</option><option value="transport">交通出行</option><option value="gas">加油 / 充电</option><option value="other">其他平台 / 商户</option></select></div>
 <div class="field"><label for="channel">支付渠道 / 方式</label><select id="channel"><option value="any">不限 / 未指定</option><option value="alipay">支付宝</option><option value="wechat">微信支付</option><option value="unionpay">云闪付</option><option value="bestpay">翼支付</option><option value="bank-app">银行 App</option><option value="douyin-pay">抖音支付</option><option value="jd-pay">京东支付</option><option value="apple-pay">Apple Pay / 手机 Pay</option><option value="card">银行卡直接刷卡</option><option value="transit-code">乘车码 / 出行码</option><option value="other">其他自定义渠道</option></select></div>
 <div class="field"><label for="when">消费日期时间</label><input id="when" type="datetime-local" /></div>
@@ -44,7 +44,7 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:26p
 <div class="card"><h2>推荐结果（按预期净收益排序）</h2><div class="muted">预期值不等于实际到账；规则有效期、资格、名额等未确认时会标注提醒。</div><div id="recommendations"></div></div>
 </section>
 <section class="panel" id="panel-rules">
-<div class="card"><h2>已保存的优惠规则</h2><div class="muted">可添加规则用于试用。第一版支持现金折扣、固定立减；消费平台与支付渠道分开设置；目前提供常见选项，其他选项可用于过渡，后续可继续加入自定义项目。新增活动起止日期；留空表示不限制日期。活动日期和每日时段都会参与推荐匹配。更复杂的积分/礼品估值后续再扩展。</div><div id="ruleList"></div></div>
+<div class="card"><h2>已保存的优惠规则</h2><div class="muted">可添加规则用于试用。支持按比例优惠、固定立减、满额减免三种类型；消费平台与支付渠道分开设置，适用场景可多选。活动起止日期留空表示不限制日期；活动日期、每日时段和每日使用次数都会参与推荐匹配。</div><div id="ruleList"></div></div>
 <div class="card">
 <h2 id="ruleFormTitle">新增优惠规则</h2>
 <form id="ruleForm">
@@ -52,13 +52,13 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:26p
 <div class="grid">
 <div class="field"><label for="rName">活动名称 *</label><input id="rName" required placeholder="例如：周末餐饮立减" /></div>
 <div class="field"><label for="rPlatform">适用消费平台 / 商户</label><select id="rPlatform"><option value="any">不限</option><option value="jd">京东</option><option value="vip">唯品会</option><option value="taobao">淘宝</option><option value="tmall">天猫</option><option value="douyin-shop">抖音商城</option><option value="pdd">拼多多</option><option value="supermarket">线下商超</option><option value="convenience">便利店</option><option value="restaurant">餐饮商户</option><option value="transport">交通出行</option><option value="gas">加油 / 充电</option><option value="other">其他平台 / 商户</option></select></div>
-<div class="field"><label for="rScene">适用场景</label><select id="rScene"><option value="subway">地铁 / 公共交通</option><option value="bus">公交</option><option value="dining">餐饮</option><option value="shopping">购物</option><option value="online">线上消费</option><option value="other">其他</option><option value="any">不限</option></select></div>
+<div class="field full"><label>适用场景（可多选）</label><div id="rScenes" class="checkgroup"><label><input type="checkbox" name="rSceneOption" value="any" checked> 不限</label><label><input type="checkbox" name="rSceneOption" value="subway"> 地铁</label><label><input type="checkbox" name="rSceneOption" value="bus"> 公交</label><label><input type="checkbox" name="rSceneOption" value="dining"> 餐饮</label><label><input type="checkbox" name="rSceneOption" value="shopping"> 购物</label><label><input type="checkbox" name="rSceneOption" value="online"> 线上消费</label><label><input type="checkbox" name="rSceneOption" value="other"> 其他</label></div><div class="help">可以同时选择地铁、公交等多个场景；选择“不限”时会清除其他选项。</div></div>
 <div class="field"><label for="rChannel">适用支付渠道</label><select id="rChannel"><option value="any">不限</option><option value="alipay">支付宝</option><option value="wechat">微信支付</option><option value="unionpay">云闪付</option><option value="bestpay">翼支付</option><option value="bank-app">银行 App</option><option value="douyin-pay">抖音支付</option><option value="jd-pay">京东支付</option><option value="apple-pay">Apple Pay / 手机 Pay</option><option value="card">银行卡直接刷卡</option><option value="transit-code">乘车码 / 出行码</option><option value="other">其他自定义渠道</option></select></div>
-<div class="field"><label for="rType">优惠类型</label><select id="rType"><option value="rate">按比例优惠</option><option value="fixed">固定立减</option></select></div>
-<div class="field"><label for="rRate">优惠比例（%）</label><input id="rRate" type="number" min="0" max="100" step="0.1" value="50" /></div>
-<div class="field"><label for="rCap">最高优惠金额（元）</label><input id="rCap" type="number" min="0" step="0.01" value="2" /></div>
-<div class="field"><label for="rMin">最低消费金额（元）</label><input id="rMin" type="number" min="0" step="0.01" value="0" /></div>
-<div class="field"><label for="rFixed">固定立减金额（元）</label><input id="rFixed" type="number" min="0" step="0.01" value="1" /></div>
+<div class="field"><label for="rType">优惠类型</label><select id="rType"><option value="rate">按比例优惠</option><option value="fixed">固定立减</option><option value="threshold">满额减免</option></select></div>
+<div class="field" id="rateField"><label for="rRate">优惠比例（%）</label><input id="rRate" type="number" min="0.1" max="100" step="0.1" value="50" /><div class="help">填写优惠掉的百分比，例如五折填写 50%。</div></div>
+<div class="field" id="capField"><label for="rCap">优惠封顶金额（元，可选）</label><input id="rCap" type="number" min="0" step="0.01" value="2" /><div class="help">留空或填 0 表示不封顶。</div></div>
+<div class="field" id="minField"><label id="rMinLabel" for="rMin">最低参与优惠金额（元）</label><input id="rMin" type="number" min="0" step="0.01" value="0" /><div class="help">按优惠前的原始消费金额判断是否达到门槛，不是优惠后的实付金额。填 0 表示无门槛。</div></div>
+<div class="field" id="fixedField"><label for="rFixed">固定减免金额（元）</label><input id="rFixed" type="number" min="0.01" step="0.01" value="1" /><div class="help" id="fixedHelp">满足规则条件后，直接减去此金额。</div></div>
 <div class="field"><label for="rDateStart">活动开始日期（可选）</label><input id="rDateStart" type="date" /></div>
 <div class="field"><label for="rDateEnd">活动结束日期（可选）</label><input id="rDateEnd" type="date" /></div>
 <div class="field"><label for="rStart">每日开始时间</label><input id="rStart" type="time" value="06:30" /></div>
@@ -85,7 +85,10 @@ const $ = id => document.getElementById(id);
 const nowLocal = () => { const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); };
 const money = n => '¥' + (Number(n)||0).toFixed(2);
 const fmtDate = s => s ? new Date(s).toLocaleString('zh-CN',{hour12:false}) : '—';
-const sceneNames = {subway:'地铁 / 公共交通',bus:'公交',dining:'餐饮',shopping:'购物',online:'线上消费',other:'其他',any:'不限'};
+const sceneNames = {subway:'地铁',bus:'公交',dining:'餐饮',shopping:'购物',online:'线上消费',other:'其他',any:'不限'};
+const sceneOptions = ['subway','bus','dining','shopping','online','other'];
+function ruleScenes(rule){const a=Array.isArray(rule.scenes)?rule.scenes:(rule.scene?[rule.scene]:['any']);return a.length?a:['any'];}
+function sceneLabel(rule){const a=ruleScenes(rule);return a.includes('any')?'不限场景':a.map(x=>sceneNames[x]||x).join('、');}
 const platformNames = {jd:'京东',vip:'唯品会',taobao:'淘宝',tmall:'天猫','douyin-shop':'抖音商城',pdd:'拼多多',supermarket:'线下商超',convenience:'便利店',restaurant:'餐饮商户',transport:'交通出行',gas:'加油 / 充电',other:'其他平台 / 商户',any:'不限 / 未指定'};
 const channelNames = {alipay:'支付宝',wechat:'微信支付',unionpay:'云闪付',bestpay:'翼支付','bank-app':'银行 App','douyin-pay':'抖音支付','jd-pay':'京东支付','apple-pay':'Apple Pay / 手机 Pay',card:'银行卡直接刷卡','transit-code':'乘车码 / 出行码',other:'其他自定义渠道',any:'不限 / 未指定'};
 const defaultRule = {id:'rule-super-transit',name:'支付宝超级出行卡',platform:'transport',scene:'subway',channel:'alipay',type:'rate',rate:50,cap:2,min:0,fixed:0,start:'06:30',end:'10:00',limit:1,notes:'已知规则：交通出行中的地铁场景，支付渠道为支付宝，06:30–10:00，五折，最高优惠 2 元，每天 1 次。活动有效期、用户资格及是否需要额外领取/报名尚待确认。',createdAt:new Date().toISOString()};
@@ -100,18 +103,31 @@ function getScene(){return {amount:Math.max(0,Number($('spend').value)||0),scene
 function inDailyWindow(when,start,end){if(!start&&!end)return true;const hm=when.slice(11,16);if(!hm)return false;if(start<=end)return hm>=start&&hm<=end;return hm>=start||hm<=end;}
 function calc(rule, s){
  let reasons=[], eligible=true;
- if(rule.platform!=='any'&&rule.platform!==s.platform){eligible=false;reasons.push('支付平台不匹配：需要'+platformNames[rule.platform]);}
- if(rule.scene!=='any'&&rule.scene!==s.scene){eligible=false;reasons.push('消费场景不匹配：需要'+sceneNames[rule.scene]);}
- if(rule.channel!=='any'&&rule.channel!==s.channel){eligible=false;reasons.push('支付渠道不匹配：需要'+channelNames[rule.channel]);}
+ if(!s.when){eligible=false;reasons.push('请填写消费日期时间，才能核验活动有效期和每日时段。');}
+ if(s.platform!=='any'&&rule.platform!=='any'&&rule.platform!==s.platform){eligible=false;reasons.push('消费平台不匹配：该规则适用'+(platformNames[rule.platform]||rule.platform));}
+ const allowedScenes=ruleScenes(rule);
+ if(!allowedScenes.includes('any')&&!allowedScenes.includes(s.scene)){eligible=false;reasons.push('消费场景不匹配：该规则适用'+allowedScenes.map(x=>sceneNames[x]||x).join('、'));}
+ if(s.channel!=='any'&&rule.channel!=='any'&&rule.channel!==s.channel){eligible=false;reasons.push('支付渠道不匹配：该规则适用'+(channelNames[rule.channel]||rule.channel));}
  const spendDate=(s.when||'').slice(0,10);
  if(rule.dateStart&&spendDate&&spendDate<rule.dateStart){eligible=false;reasons.push('活动尚未开始（开始日期：'+rule.dateStart+'）');}
  if(rule.dateEnd&&spendDate&&spendDate>rule.dateEnd){eligible=false;reasons.push('活动已结束（结束日期：'+rule.dateEnd+'）');}
- if(s.amount<Number(rule.min||0)){eligible=false;reasons.push('未达到最低消费 '+money(rule.min));}
+ if(s.amount<Number(rule.min||0)){eligible=false;reasons.push((rule.type==='threshold'?'未达到满减门槛 ':'未达到最低参与优惠金额 ')+money(rule.min)+'（按优惠前消费金额判断）');}
  if(!inDailyWindow(s.when,rule.start,rule.end)){eligible=false;reasons.push('不在每日活动时段 '+(rule.start||'00:00')+'–'+(rule.end||'23:59'));}
+ const dateKey=spendDate;
+ const usedCount=state.feedback.filter(f=>f.ruleId===rule.id&&(f.result==='confirmed'||f.result==='used-unknown')&&(f.when||'').slice(0,10)===dateKey).length;
+ const limit=Math.max(1,Number(rule.limit)||1);
+ if(dateKey&&usedCount>=limit){eligible=false;reasons.push('该规则当天已使用 '+usedCount+' 次，达到每日限用 '+limit+' 次');}
  let discount=0;
- if(eligible){discount=rule.type==='fixed'?Math.min(s.amount,Number(rule.fixed)||0):Math.min(s.amount*(Number(rule.rate)||0)/100,Number(rule.cap)||0);discount=Math.max(0,discount);}
- const net=Math.max(0,discount-s.extraCost);
- return {eligible,discount,net,reasons};
+ if(eligible){
+   const amount=Math.max(0,Number(s.amount)||0), rate=Math.max(0,Number(rule.rate)||0), cap=Number(rule.cap)||0, fixed=Math.max(0,Number(rule.fixed)||0);
+   if(rule.type==='fixed') discount=Math.min(amount,fixed);
+   else if(rule.type==='threshold') discount=Math.min(amount,fixed);
+   else {discount=amount*rate/100;if(cap>0)discount=Math.min(discount,cap);}
+   discount=Math.max(0,discount);
+ }
+ const net=discount-(Number(s.extraCost)||0);
+ if(eligible&&net<0){eligible=false;reasons.push('预计净收益为负数（'+money(net)+'），不列入正常推荐');}
+ return {eligible,discount,net,reasons,usedCount};
 }
 function renderRecommendations(){
  const s=getScene(); const results=state.rules.map(r=>({rule:r,...calc(r,s)})).sort((a,b)=>b.net-a.net);
@@ -123,16 +139,16 @@ function renderRecommendations(){
  if(!results.length){root.innerHTML='<div class="empty">还没有优惠规则，请到“优惠规则”添加。</div>';return;}
  root.innerHTML=results.map((x,i)=>{
  const r=x.rule, warn=r.id==='rule-super-transit'?'活动有效期、资格及领券/报名条件待确认。':'请确认活动有效期、资格、名额和叠加规则。';
- const calcText=r.type==='fixed'?'固定立减 '+money(r.fixed)+'，不超过消费金额':'消费金额 × '+(Number(r.rate)||0)+'%，封顶 '+money(r.cap);
- return `<article class="recommendation"><div class="rec-head"><div><div class="rec-title">${esc(r.name)}</div><div class="muted">${esc(platformNames[r.platform]||r.platform)} · ${esc(sceneNames[r.scene]||r.scene)} · ${esc(channelNames[r.channel]||r.channel)}</div></div><span class="rank">${x.eligible?'预期净收益排名 #'+(eligible.indexOf(x)+1):'当前不适用'}</span></div>
+ const calcText=r.type==='fixed'?'固定立减 '+money(r.fixed)+'（不超过消费金额）':r.type==='threshold'?'消费满 '+money(r.min)+' 减 '+money(r.fixed):'优惠 '+(Number(r.rate)||0)+'%'+(Number(r.cap)>0?'，最高优惠 '+money(r.cap):'，不封顶');
+ return `<article class="recommendation"><div class="rec-head"><div><div class="rec-title">${esc(r.name)}</div><div class="muted">${esc(platformNames[r.platform]||r.platform)} · ${esc(sceneLabel(r))} · ${esc(channelNames[r.channel]||r.channel)}</div></div><span class="rank">${x.eligible?'预期净收益排名 #'+(eligible.indexOf(x)+1):'当前不适用'}</span></div>
  <div class="money">${x.eligible?money(x.net):'—'} <span style="font-size:12px;font-weight:500;color:#667779">预期净收益</span></div>
  <div><span class="pill ${x.eligible?'good':'warn'}">${x.eligible?'符合当前条件':'条件未满足'}</span><span class="pill">预期优惠 ${money(x.discount)}</span><span class="pill">额外成本 ${money(s.extraCost)}</span></div>
  <div class="reason">${x.eligible?'计算依据：'+calcText+'；消费 '+money(s.amount)+'，预计优惠 '+money(x.discount)+'，扣除额外成本后 '+money(x.net)+'。':esc(x.reasons.join('；'))}</div>
- <div class="reason"><strong>使用限制：</strong>活动日期 ${esc(r.dateStart||'不限开始日期')} 至 ${esc(r.dateEnd||'不限结束日期')}；每日时段 ${esc(r.start||'全天')}–${esc(r.end||'全天')}；每天最多 ${Number(r.limit)||1} 次。${esc(r.notes||'暂无补充备注')}</div>
+ <div class="reason"><strong>使用限制：</strong>活动日期 ${esc(r.dateStart||'不限开始日期')} 至 ${esc(r.dateEnd||'不限结束日期')}；每日时段 ${esc(r.start||'全天')}–${esc(r.end||'全天')}；每天最多 ${Number(r.limit)||1} 次。${x.usedCount?'当日已使用 '+x.usedCount+' 次。 ':''}${esc(r.notes||'暂无补充备注')}</div>
  <div class="actions"><button class="primary small" data-feedback="${escAttr(r.id)}" ${x.eligible?'':'disabled style="opacity:.45;cursor:not-allowed"'}>选择此方案并反馈</button><button class="secondary small" data-edit="${escAttr(r.id)}">编辑规则</button></div>
  <div class="feedback" id="feedback-${escAttr(r.id)}" hidden><h3>记录本次使用情况：${esc(r.name)}</h3><div class="grid">
  <div class="field"><label>使用结果</label><select id="fb-result-${escAttr(r.id)}"><option value="confirmed">已使用并确认优惠</option><option value="used-unknown">已使用，优惠金额待确认</option><option value="failed">优惠未生效</option><option value="switched">改用其他卡 / 方式</option><option value="not-used">最后未使用</option></select></div>
- <div class="field"><label>实际省钱金额（元）</label><input id="fb-actual-${escAttr(r.id)}" type="number" min="0" step="0.01" value="${x.discount.toFixed(2)}"></div>
+ <div class="field"><label>实际省钱金额（元）</label><input id="fb-actual-${escAttr(r.id)}" type="number" min="0" max="${Number(s.amount)||0}" step="0.01" value="${x.discount.toFixed(2)}"></div>
  <div class="field full"><label>备注（可选）</label><input id="fb-note-${escAttr(r.id)}" placeholder="例如实际扣款、优惠券到账、失败原因"></div></div>
  <div class="actions"><button class="primary small" data-save-feedback="${escAttr(r.id)}">保存反馈</button><button class="secondary small" data-cancel-feedback="${escAttr(r.id)}">取消</button></div>
  <div class="help">“已使用并确认优惠”才计入实际省钱统计。实际金额请填写实际兑现的现金优惠，不要填写预期金额（除非确实一致）。</div></div></article>`;
@@ -144,24 +160,30 @@ function renderRecommendations(){
 }
 function saveFeedback(ruleId,s){
  const rule=state.rules.find(r=>r.id===ruleId);if(!rule)return;
- const result=$('fb-result-'+ruleId).value, actual=Math.max(0,Number($('fb-actual-'+ruleId).value)||0);
+ const result=$('fb-result-'+ruleId).value, actualRaw=$('fb-actual-'+ruleId).value, actual=Number(actualRaw);
  const confirmed=result==='confirmed';
- state.feedback.unshift({id:uid(),ruleId,ruleName:rule.name,scene:sceneNames[s.scene],platform:platformNames[s.platform],amount:s.amount,expected:calc(rule,s).discount,actual:confirmed?actual:0,confirmed,result,when:s.when,feedbackAt:new Date().toISOString(),note:$('fb-note-'+ruleId).value.trim()});
+ if(confirmed&&(String(actualRaw).trim()===''||!Number.isFinite(actual)||actual<0||actual>s.amount)){alert('请填写实际省钱金额，且必须大于等于 0、不能超过本次消费金额 '+money(s.amount)+'。');return;}
+ if(!s.when){alert('请先填写消费日期时间，再保存反馈。');return;}
+ state.feedback.unshift({id:uid(),ruleId,ruleName:rule.name,scene:sceneNames[s.scene],platform:platformNames[s.platform],channel:channelNames[s.channel],amount:s.amount,expected:calc(rule,s).discount,actual:confirmed?actual:0,confirmed,result,when:s.when,feedbackAt:new Date().toISOString(),note:$('fb-note-'+ruleId).value.trim()});
  save();renderRecommendations();renderHistory();$('dataStatus').textContent='反馈已保存。';alert('反馈已保存'+(confirmed?'，实际省钱 '+money(actual)+' 已计入统计。':'，该记录不会计入已确认实际省钱统计。'));
 }
 function renderRules(){
  const root=$('ruleList');if(!state.rules.length){root.innerHTML='<div class="empty">暂无规则。</div>';return;}
- root.innerHTML=state.rules.map(r=>`<div class="rule-item"><div class="rec-head"><div><strong>${esc(r.name)}</strong><div class="muted">${esc(platformNames[r.platform]||r.platform)} · ${esc(sceneNames[r.scene]||r.scene)} · ${esc(channelNames[r.channel]||r.channel)}</div></div><div>${r.type==='fixed'?'立减 '+money(r.fixed):((Number(r.rate)||0)+'% 封顶 '+money(r.cap))}</div></div><div class="muted">最低消费 ${money(r.min)}；活动日期 ${esc(r.dateStart||'不限开始日期')} 至 ${esc(r.dateEnd||'不限结束日期')}；每日时段 ${esc(r.start||'全天')}–${esc(r.end||'全天')}；每天 ${Number(r.limit)||1} 次</div><div class="muted">${esc(r.notes||'无备注')}</div><div class="actions"><button class="secondary small" data-edit="${escAttr(r.id)}">编辑</button><button class="danger small" data-delete="${escAttr(r.id)}">删除</button></div></div>`).join('');
+ root.innerHTML=state.rules.map(r=>`<div class="rule-item"><div class="rec-head"><div><strong>${esc(r.name)}</strong><div class="muted">${esc(platformNames[r.platform]||r.platform)} · ${esc(sceneLabel(r))} · ${esc(channelNames[r.channel]||r.channel)}</div></div><div>${r.type==='fixed'?'固定立减 '+money(r.fixed):r.type==='threshold'?'满 '+money(r.min)+' 减 '+money(r.fixed):('优惠 '+(Number(r.rate)||0)+'%'+(Number(r.cap)>0?' 封顶 '+money(r.cap):' 不封顶'))}</div></div><div class="muted">${r.type==='threshold'?'满减门槛金额':'最低参与优惠金额'} ${money(r.min)}；活动日期 ${esc(r.dateStart||'不限开始日期')} 至 ${esc(r.dateEnd||'不限结束日期')}；每日时段 ${esc(r.start||'全天')}–${esc(r.end||'全天')}；每天 ${Number(r.limit)||1} 次</div><div class="muted">${esc(r.notes||'无备注')}</div><div class="actions"><button class="secondary small" data-edit="${escAttr(r.id)}">编辑</button><button class="danger small" data-delete="${escAttr(r.id)}">删除</button></div></div>`).join('');
  root.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>editRule(b.dataset.edit)));
  root.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{if(confirm('确定删除这条规则？历史反馈记录会保留。')){state.rules=state.rules.filter(r=>r.id!==b.dataset.delete);save();renderRules();renderRecommendations();}}));
 }
 function editRule(id){
  const r=state.rules.find(x=>x.id===id);if(!r)return;
- $('ruleId').value=r.id;$('rName').value=r.name;$('rPlatform').value=r.platform;$('rScene').value=r.scene;$('rChannel').value=r.channel;$('rType').value=r.type;$('rRate').value=r.rate??50;$('rCap').value=r.cap??2;$('rMin').value=r.min??0;$('rFixed').value=r.fixed??1;$('rDateStart').value=r.dateStart||'';$('rDateEnd').value=r.dateEnd||'';$('rStart').value=r.start||'';$('rEnd').value=r.end||'';$('rLimit').value=r.limit||1;$('rNotes').value=r.notes||'';$('ruleFormTitle').textContent='编辑优惠规则';switchTab('rules');window.scrollTo({top:document.getElementById('ruleForm').getBoundingClientRect().top+window.scrollY-20,behavior:'smooth'});
+ $('ruleId').value=r.id;$('rName').value=r.name;$('rPlatform').value=r.platform;$('rChannel').value=r.channel;$('rType').value=r.type||'rate';$('rRate').value=r.rate??50;$('rCap').value=r.cap??2;$('rMin').value=r.min??0;$('rFixed').value=r.fixed??1;$('rDateStart').value=r.dateStart||'';$('rDateEnd').value=r.dateEnd||'';$('rStart').value=r.start||'';$('rEnd').value=r.end||'';$('rLimit').value=r.limit||1;$('rNotes').value=r.notes||'';const selected=ruleScenes(r);document.querySelectorAll('input[name="rSceneOption"]').forEach(c=>c.checked=selected.includes(c.value));$('ruleFormTitle').textContent='编辑优惠规则';updateTypeFields();switchTab('rules');window.scrollTo({top:document.getElementById('ruleForm').getBoundingClientRect().top+window.scrollY-20,behavior:'smooth'});
 }
-function clearForm(){$('ruleForm').reset();$('ruleId').value='';$('rRate').value=50;$('rCap').value=2;$('rMin').value=0;$('rFixed').value=1;$('rDateStart').value='';$('rDateEnd').value='';$('rStart').value='06:30';$('rEnd').value='10:00';$('rLimit').value=1;$('ruleFormTitle').textContent='新增优惠规则';}
-$('ruleForm').addEventListener('submit',e=>{e.preventDefault();const id=$('ruleId').value||uid();const r={id,name:$('rName').value.trim(),platform:$('rPlatform').value,scene:$('rScene').value,channel:$('rChannel').value,type:$('rType').value,rate:Number($('rRate').value)||0,cap:Number($('rCap').value)||0,min:Number($('rMin').value)||0,fixed:Number($('rFixed').value)||0,dateStart:$('rDateStart').value,dateEnd:$('rDateEnd').value,start:$('rStart').value,end:$('rEnd').value,limit:Math.max(1,Number($('rLimit').value)||1),notes:$('rNotes').value.trim()};const ix=state.rules.findIndex(x=>x.id===id);if(r.dateStart&&r.dateEnd&&r.dateEnd<r.dateStart){$('ruleStatus').textContent='保存失败：活动结束日期不能早于开始日期。';$('ruleStatus').className='status bad';return;}if(ix>=0)state.rules[ix]=r;else state.rules.push(r);save();clearForm();$('ruleStatus').textContent='规则已保存。';$('ruleStatus').className='status ok';renderRules();renderRecommendations();});
+function updateTypeFields(){const type=$('rType').value;$('rateField').classList.toggle('hidden',type!=='rate');$('capField').classList.toggle('hidden',type!=='rate');$('fixedField').classList.toggle('hidden',type==='rate');$('minField').classList.remove('hidden');$('fixedHelp').textContent=type==='threshold'?'消费金额达到门槛后，减免此固定金额。':'满足规则条件后，直接减去此金额。';$('rMin').min='0';$('rMinLabel').textContent=type==='threshold'?'满减门槛金额（元）':'最低参与优惠金额（元）';}
+function getSelectedScenes(){const checked=Array.from(document.querySelectorAll('input[name="rSceneOption"]:checked')).map(c=>c.value);return checked.length?checked:['any'];}
+function clearForm(){$('ruleForm').reset();$('ruleId').value='';$('rRate').value=50;$('rCap').value=2;$('rMin').value=0;$('rFixed').value=1;$('rDateStart').value='';$('rDateEnd').value='';$('rStart').value='06:30';$('rEnd').value='10:00';$('rLimit').value=1;document.querySelectorAll('input[name="rSceneOption"]').forEach(c=>c.checked=c.value==='any');$('ruleFormTitle').textContent='新增优惠规则';updateTypeFields();}
+$('ruleForm').addEventListener('submit',e=>{e.preventDefault();const id=$('ruleId').value||uid();const scenes=getSelectedScenes();const r={id,name:$('rName').value.trim(),platform:$('rPlatform').value,scene:scenes[0],scenes,channel:$('rChannel').value,type:$('rType').value,rate:Number($('rRate').value)||0,cap:Number($('rCap').value)||0,min:Number($('rMin').value)||0,fixed:Number($('rFixed').value)||0,dateStart:$('rDateStart').value,dateEnd:$('rDateEnd').value,start:$('rStart').value,end:$('rEnd').value,limit:Math.max(1,Number($('rLimit').value)||1),notes:$('rNotes').value.trim()};const ix=state.rules.findIndex(x=>x.id===id);if(r.dateStart&&r.dateEnd&&r.dateEnd<r.dateStart){$('ruleStatus').textContent='保存失败：活动结束日期不能早于开始日期。';$('ruleStatus').className='status bad';return;}if(r.type==='rate'&&r.rate<=0){$('ruleStatus').textContent='保存失败：优惠比例必须大于 0。';$('ruleStatus').className='status bad';return;}if(r.type!=='rate'&&r.fixed<=0){$('ruleStatus').textContent='保存失败：固定减免金额必须大于 0。';$('ruleStatus').className='status bad';return;}if(r.type==='threshold'&&r.min<=0){$('ruleStatus').textContent='保存失败：满额减免的门槛必须大于 0。';$('ruleStatus').className='status bad';return;}if(ix>=0)state.rules[ix]=r;else state.rules.push(r);save();clearForm();$('ruleStatus').textContent='规则已保存。';$('ruleStatus').className='status ok';renderRules();renderRecommendations();});
 $('cancelEdit').addEventListener('click',clearForm);
+$('rType').addEventListener('change',updateTypeFields);
+document.querySelectorAll('input[name="rSceneOption"]').forEach(c=>c.addEventListener('change',()=>{if(c.value==='any'&&c.checked){document.querySelectorAll('input[name="rSceneOption"]').forEach(x=>{if(x.value!=='any')x.checked=false;});}else if(c.checked){const any=document.querySelector('input[name="rSceneOption"][value="any"]');if(any)any.checked=false;}if(!document.querySelector('input[name="rSceneOption"]:checked'))document.querySelector('input[name="rSceneOption"][value="any"]').checked=true;}));
 $('runRecommend').addEventListener('click',renderRecommendations);
 ['spend','scene','platform','channel','when','extraCost'].forEach(id=>$(id).addEventListener('change',renderRecommendations));
 $('resetScene').addEventListener('click',()=>{$('spend').value=4;$('scene').value='subway';$('platform').value='transport';$('channel').value='alipay';$('when').value=nowLocal();$('extraCost').value=0;renderRecommendations();});
@@ -178,7 +200,7 @@ $('clearBtn').addEventListener('click',()=>{if(confirm('确定清空本工具的
 function uid(){return 'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function escAttr(s){return esc(s);}
-renderRecommendations();renderRules();renderHistory();save();
+updateTypeFields();renderRecommendations();renderRules();renderHistory();save();
 })();
 </script>
 </body>
