@@ -19,7 +19,7 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
 </style>
 </head>
 <body>
-<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V1.4.1<br>更新于 2026-10-30（UTC+8）</div></div></header>
+<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V1.4.2<br>更新于 2026-10-30（UTC+8）</div></div></header>
 <main class="wrap">
 <div class="notice"><details><summary>试用说明：V1.4.1 使用独立本地存储，与旧版数据隔离；示例规则有效期尚未确认。</summary><div class="notice-full">数据仅保存在本浏览器的独立存储空间，不覆盖旧版消费推荐工具数据，也不会与周期任务页面共用或自动同步到其他设备。新增规则支持设置活动开始/结束日期；日期留空表示不限制。当前内置 1 条「支付宝超级出行卡」示例规则，其活动有效期尚未确认。建议先用小额场景测试推荐、反馈和数据导出；更换浏览器或清理浏览器数据前，请先导出备份。</div></details></div>
 <nav class="tabs">
@@ -103,13 +103,14 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
 <div class="tablewrap"><table><thead><tr><th>时间</th><th>规则 / 场景</th><th>反馈</th><th>实际省钱</th><th>备注</th><th></th></tr></thead><tbody id="historyRows"></tbody></table></div><div id="historyEmpty" class="empty">还没有反馈记录。</div></div>
 </section>
 <section class="panel" id="panel-data">
-<div class="card"><h2>数据备份与恢复</h2><p class="muted">V1.4.1 使用独立存储键 card-recommender-v1-4-1，不会覆盖旧版数据。可通过导入 JSON 备份迁移旧版规则与记录。建议定期导出备份。</p><div class="actions"><button class="primary" id="exportBtn">导出 JSON 备份</button><button class="secondary" id="importBtn">导入 JSON 备份</button><button class="danger" id="clearBtn">清空本工具数据</button><input class="hidden" id="importFile" type="file" accept="application/json,.json"></div><div id="dataStatus" class="status"></div></div>
+<div class="card"><h2>数据备份与恢复</h2><p class="muted">V1.4.2 默认沿用旧版主存储键，打开即读取之前的数据，不需要每次导入。若检测到 V1.4.1 独立试用数据，会自动合并；同 ID 以试用版为准，其他记录保留。建议升级前仍先导出备份。</p><div class="actions"><button class="primary" id="exportBtn">导出 JSON 备份</button><button class="secondary" id="importBtn">导入 JSON 备份</button><button class="danger" id="clearBtn">清空本工具数据</button><input class="hidden" id="importFile" type="file" accept="application/json,.json"></div><div id="dataStatus" class="status"></div></div>
 </section>
 </main>
 <script>
 (() => {
 'use strict';
-const STORAGE_KEY = 'card-recommender-v1-4-1';
+const STORAGE_KEY = 'card-recommender-v1';
+const PREVIOUS_STORAGE_KEYS = ['card-recommender-v1-4-1'];
 const $ = id => document.getElementById(id);
 const nowLocal = () => { const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); };
 const todayLocal = () => nowLocal().slice(0,10);
@@ -125,7 +126,18 @@ const platformNames = {jd:'京东',vip:'唯品会',taobao:'淘宝',tmall:'天猫
 const channelNames = {alipay:'支付宝',wechat:'微信支付',unionpay:'云闪付',bestpay:'翼支付','bank-app':'银行 App','douyin-pay':'抖音支付','jd-pay':'京东支付','apple-pay':'Apple Pay / 手机 Pay',card:'银行卡直接刷卡','transit-code':'乘车码 / 出行码',other:'其他自定义渠道',any:'不限 / 未指定'};
 const defaultRule = {id:'rule-super-transit',name:'支付宝超级出行卡',platform:'transport',scene:'subway',channel:'alipay',type:'rate',rate:50,cap:2,min:0,fixed:0,start:'06:30',end:'10:00',limit:1,notes:'已知规则：交通出行中的地铁场景，支付渠道为支付宝，06:30–10:00，五折，最高优惠 2 元，每天 1 次。活动有效期、用户资格及是否需要额外领取/报名尚待确认。',createdAt:new Date().toISOString()};
 function initialState(){return {version:3,rules:[defaultRule],feedback:[],activities:[],spendEntries:[],rewardRecords:[],lastUpdated:new Date().toISOString()};}
-function load(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(x&&Array.isArray(x.rules)&&Array.isArray(x.feedback)){if(!Array.isArray(x.activities))x.activities=[];if(!Array.isArray(x.spendEntries))x.spendEntries=[];if(!Array.isArray(x.rewardRecords))x.rewardRecords=[];x.activities=x.activities.map(normalizeActivity);return x;}}catch(e){}return initialState();}
+function load(){
+ const read=(key)=>{try{const x=JSON.parse(localStorage.getItem(key)||'null');return x&&Array.isArray(x.rules)&&Array.isArray(x.feedback)?x:null;}catch(_){return null;}};
+ const old=read(STORAGE_KEY);let current=null;for(const key of PREVIOUS_STORAGE_KEYS){current=read(key);if(current)break;}
+ if(!old&&!current)return initialState();
+ if(!old)return normalizeLoadedState(current);
+ if(!current)return normalizeLoadedState(old);
+ // 自动合并旧版主数据与 V1.4.1 试用数据；相同 ID 以较新试用版为准，其余记录保留。
+ const merge=(a,b)=>{const out=Array.isArray(a)?a.slice():[];const index=new Map(out.map((v,i)=>[v&&v.id!==undefined?String(v.id):JSON.stringify(v),i]));(Array.isArray(b)?b:[]).forEach(v=>{const k=v&&v.id!==undefined?String(v.id):JSON.stringify(v);if(index.has(k))out[index.get(k)]=v;else{index.set(k,out.length);out.push(v);}});return out;};
+ const merged={...old,...current,version:3,rules:merge(old.rules,current.rules),feedback:merge(old.feedback,current.feedback),activities:merge(old.activities,current.activities),spendEntries:merge(old.spendEntries,current.spendEntries),rewardRecords:merge(old.rewardRecords,current.rewardRecords),lastUpdated:new Date().toISOString()};
+ return normalizeLoadedState(merged);
+}
+function normalizeLoadedState(x){x={...x,version:3,rules:Array.isArray(x.rules)?x.rules:[],feedback:Array.isArray(x.feedback)?x.feedback:[],activities:Array.isArray(x.activities)?x.activities:[],spendEntries:Array.isArray(x.spendEntries)?x.spendEntries:[],rewardRecords:Array.isArray(x.rewardRecords)?x.rewardRecords:[]};x.activities=x.activities.map(normalizeActivity);return x;}
 let state=load();
 function save(){state.lastUpdated=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 function switchTab(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='panel-'+name));if(name==='rules')renderRules();if(name==='activities'){renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();}if(name==='history')renderHistory();if(name==='recommend')renderRecommendations();}
@@ -342,8 +354,11 @@ $('clearBtn').addEventListener('click',()=>{if(confirm('确定清空本工具的
 function uid(){return 'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function escAttr(s){return esc(s);}
-// V1.4.1：扩展标准消费场景，并为所有场景/平台选择增加搜索与自定义入口。
+// V1.4.2：延续旧版主存储键并自动合并试用版数据；扩展场景和可搜索平台。
 const SCENE_CUSTOM_KEY='card-recommender-custom-scenes-v1';
+const PLATFORM_CUSTOM_KEY='card-recommender-custom-platforms-v1';
+let customPlatforms=[];
+try{customPlatforms=JSON.parse(localStorage.getItem(PLATFORM_CUSTOM_KEY)||'[]');if(!Array.isArray(customPlatforms))customPlatforms=[];}catch(_){customPlatforms=[];}
 let customScenes=[];
 try{customScenes=JSON.parse(localStorage.getItem(SCENE_CUSTOM_KEY)||'[]');if(!Array.isArray(customScenes))customScenes=[];}catch(_){customScenes=[];}
 const allSceneSelectIds=['scene','aScene','eScene'];
