@@ -20,11 +20,11 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
 </style>
 </head>
 <body>
-<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V2.3<br>更新于 2026-10-31（UTC+8）</div></div></header>
+<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V2.4<br>更新于 2026-11-02（UTC+8）</div></div></header>
 <main class="wrap">
-<div class="notice"><details><summary>试用说明：本工具使用独立本地存储，与旧版数据隔离；示例规则有效期尚未确认。</summary><div class="notice-full">数据仅保存在本浏览器的独立存储空间，不覆盖旧版消费推荐工具数据，也不会与周期任务页面共用或自动同步到其他设备。新增规则支持设置活动开始/结束日期；日期留空表示不限制。当前内置 1 条「支付宝超级出行卡」示例规则，其活动有效期尚未确认。建议先用小额场景测试推荐、反馈和数据导出；更换浏览器或清理浏览器数据前，请先导出备份。</div></details></div>
+<div class="notice"><details><summary>试用说明：本工具使用独立本地存储，与旧版数据隔离；示例规则有效期尚未确认。</summary><div class="notice-full">数据仅保存在本浏览器的独立存储空间，不覆盖旧版消费推荐工具数据，也不会与周期任务页面共用或自动同步到其他设备。新增规则支持设置活动开始/结束日期；资产达标活动支持月日均计算及多档奖励。当前内置 1 条「支付宝超级出行卡」示例规则，其活动有效期尚未确认。建议先用小额场景测试推荐、反馈和数据导出；更换浏览器或清理浏览器数据前，请先导出备份。</div></details></div>
 <nav class="tabs">
-<button class="tab on" data-tab="recommend">场景推荐</button><button class="tab" data-tab="rules">优惠规则</button><button class="tab" data-tab="activities">累计达标活动</button><button class="tab" data-tab="history">使用反馈</button><button class="tab" data-tab="data">数据备份</button>
+<button class="tab on" data-tab="recommend">场景推荐</button><button class="tab" data-tab="rules">优惠规则</button><button class="tab" data-tab="activities">累计达标活动</button><button class="tab" data-tab="assets">资产达标活动</button><button class="tab" data-tab="history">使用反馈</button><button class="tab" data-tab="data">数据备份</button>
 </nav>
 <section class="panel on" id="panel-recommend">
 <div class="card">
@@ -106,6 +106,47 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
 <div class="field"><label for="eScene">消费场景</label><select id="eScene"><option value="any">未指定 / 不限</option><option value="subway">地铁</option><option value="bus">公交</option><option value="dining">餐饮</option><option value="shopping">购物</option><option value="online">线上消费</option><option value="other">其他</option></select></div><div class="field full"><label>计入哪些累计达标活动（可多选）</label><div id="eActivities" class="checklist"><span class="muted">请先创建活动。</span></div></div><div class="field full"><label for="eNotes">消费说明 / 备注</label><input id="eNotes" placeholder="例如订单号、退款情况、每日汇总口径"></div></div><div class="actions"><button class="primary" type="submit">保存消费记录</button><button class="secondary" type="button" id="cancelSpendRecord">清空表单</button></div><div id="spendRecordStatus" class="status"></div></form></div>
 <div class="card"><div class="section-heading"><div><h2>消费记录明细</h2><div class="muted">修改或删除记录后，相关活动的累计金额、每日新增汇总、进度和达标状态自动重算。每日汇总按每个活动独立计算，同一笔记录关联多个活动时会分别计入各活动。</div></div></div><div class="tablewrap"><table><thead><tr><th>日期</th><th>记录方式</th><th>金额</th><th>消费条件</th><th>关联活动</th><th>备注</th><th>操作</th></tr></thead><tbody id="spendRecordRows"></tbody></table></div><div id="spendRecordEmpty" class="empty">还没有消费记录。</div></div>
 </section>
+
+<section class="panel" id="panel-assets">
+ <div class="card">
+  <div class="section-heading"><div><h2>银行金融资产月日均达标活动</h2><div class="muted">一条活动设置多个奖励档位，不需要为每档创建单独优惠，也不建议把门槛写在备注中。存款、理财、基金等按银行活动细则纳入资产总额。</div></div><button class="primary" type="button" id="newAssetActivityBtn">＋新增资产活动</button></div>
+  <form id="assetActivityForm" class="form-collapsed" novalidate>
+   <input type="hidden" id="assetActivityId">
+   <div class="grid">
+    <div class="field"><label for="assetBank">银行 / 活动名称 *</label><input id="assetBank" required placeholder="例如：某银行月月升金礼"></div>
+    <div class="field"><label for="assetMonth">考核月份 *</label><input id="assetMonth" type="month" required></div>
+    <div class="field"><label for="assetStart">统计开始日期 *</label><input id="assetStart" type="date" required></div>
+    <div class="field"><label for="assetEnd">统计结束日期 *</label><input id="assetEnd" type="date" required></div>
+    <div class="field full"><label for="assetScope">计入资产范围 / 银行口径 *</label><textarea id="assetScope" rows="2" required placeholder="例如：本行存款、理财、基金；以活动细则为准，注明不计入的资产"></textarea></div>
+    <div class="field full"><label for="assetNotes">其他条件 / 备注</label><textarea id="assetNotes" rows="2" placeholder="例如：是否要求新资金、是否需报名、资产基准日、奖励发放时间等"></textarea></div>
+    <div class="field full">
+     <div class="section-heading"><div><h3>奖励档位</h3><div class="muted">每档填写月日均资产门槛及对应奖励；奖励类型可选现金、积分或其他权益。</div></div><button type="button" class="secondary" id="addAssetTierBtn">＋添加档位</button></div>
+     <div id="assetTiersEditor"></div>
+    </div>
+   </div>
+   <div class="actions"><button class="primary" type="submit">保存资产活动</button><button class="secondary" type="button" id="cancelAssetActivityBtn">取消</button></div>
+   <div id="assetActivityStatus" class="status"></div>
+  </form>
+ </div>
+ <div class="card">
+  <div class="form-toolbar"><h2 style="margin:0">每日金融资产余额记录</h2><button class="primary" type="button" id="newAssetEntryBtn">＋记录每日资产</button></div>
+  <p class="muted">每天录入该银行符合活动口径的金融资产总额。系统按每日余额计算月日均；同一天重复录入时，以最后保存的一条为准。建议按银行活动规定的统计日期和余额口径记录。</p>
+  <form id="assetEntryForm" class="form-collapsed" novalidate>
+   <input type="hidden" id="assetEntryId">
+   <div class="grid">
+    <div class="field"><label for="assetEntryActivity">所属活动 *</label><select id="assetEntryActivity" required></select></div>
+    <div class="field"><label for="assetEntryDate">资产日期 *</label><input id="assetEntryDate" type="date" required></div>
+    <div class="field"><label for="assetEntryAmount">当日金融资产总额（元） *</label><input id="assetEntryAmount" type="number" min="0" step="0.01" required placeholder="存款+符合口径的理财、基金等"></div>
+    <div class="field"><label for="assetEntryNotes">备注</label><input id="assetEntryNotes" placeholder="可记录余额构成或特殊变动"></div>
+   </div>
+   <div class="actions"><button class="primary" type="submit">保存每日资产</button><button class="secondary" type="button" id="cancelAssetEntryBtn">取消</button></div>
+   <div id="assetEntryStatus" class="status"></div>
+  </form>
+ </div>
+ <div class="card"><h2>活动进度与月日均测算</h2><div id="assetActivityList"></div></div>
+ <div class="card"><h2>每日资产记录明细</h2><div class="tablewrap"><table><thead><tr><th>日期</th><th>银行 / 活动</th><th>金融资产余额</th><th>备注</th><th>操作</th></tr></thead><tbody id="assetEntryRows"></tbody></table></div><div id="assetEntryEmpty" class="empty">暂无每日资产记录。</div></div>
+</section>
+
 <section class="panel" id="panel-history">
 <div class="card"><h2>使用反馈记录</h2><p class="muted">支持修改已保存的反馈，包括消费日期、消费金额、平台、支付渠道、场景、使用结果、实际省钱和备注。修改后会重新计算实际省钱统计及每日使用次数。</p>
 <div id="feedbackEditBox" class="feedback" hidden><h3 id="feedbackEditTitle">修改使用反馈</h3><form id="feedbackEditForm" novalidate><input type="hidden" id="feedbackEditId"><div class="grid">
@@ -140,7 +181,7 @@ function sceneLabel(rule){const a=ruleScenes(rule);return a.includes('any')?'不
 const platformNames = {jd:'京东',vip:'唯品会',taobao:'淘宝',tmall:'天猫','douyin-shop':'抖音商城',pdd:'拼多多',supermarket:'线下商超',convenience:'便利店',restaurant:'餐饮商户',transport:'交通出行',gas:'加油 / 充电',other:'其他平台 / 商户',any:'不限 / 未指定'};
 const channelNames = {alipay:'支付宝',wechat:'微信支付',unionpay:'云闪付',bestpay:'翼支付','bank-app':'银行 App','douyin-pay':'抖音支付','jd-pay':'京东支付','apple-pay':'Apple Pay / 手机 Pay',card:'银行卡直接刷卡','transit-code':'乘车码 / 出行码',other:'其他自定义渠道',any:'不限 / 未指定'};
 const defaultRule = {id:'rule-super-transit',name:'支付宝超级出行卡',platform:'transport',scene:'subway',channel:'alipay',type:'rate',rate:50,cap:2,min:0,fixed:0,start:'06:30',end:'10:00',limit:1,notes:'已知规则：交通出行中的地铁场景，支付渠道为支付宝，06:30–10:00，五折，最高优惠 2 元，每天 1 次。活动有效期、用户资格及是否需要额外领取/报名尚待确认。',createdAt:new Date().toISOString()};
-function initialState(){return {version:4,rules:[defaultRule],feedback:[],activities:[],spendEntries:[],rewardRecords:[],rewardActivities:[],lastUpdated:new Date().toISOString()};}
+function initialState(){return {version:4,rules:[defaultRule],feedback:[],activities:[],spendEntries:[],rewardRecords:[],rewardActivities:[],bankAssetActivities:[],bankAssetEntries:[],lastUpdated:new Date().toISOString()};}
 function load(){
  const read=(key)=>{try{const x=JSON.parse(localStorage.getItem(key)||'null');return x&&Array.isArray(x.rules)&&Array.isArray(x.feedback)?x:null;}catch(_){return null;}};
  const old=read(STORAGE_KEY);let current=null;for(const key of PREVIOUS_STORAGE_KEYS){current=read(key);if(current)break;}
@@ -151,14 +192,14 @@ function load(){
  if(!current)return normalizeLoadedState(old);
  // 自动合并旧版主数据与 V1.4.1 试用数据；相同 ID 以较新试用版为准，其余记录保留。
  const merge=(a,b)=>{const out=Array.isArray(a)?a.slice():[];const index=new Map(out.map((v,i)=>[v&&v.id!==undefined?String(v.id):JSON.stringify(v),i]));(Array.isArray(b)?b:[]).forEach(v=>{const k=v&&v.id!==undefined?String(v.id):JSON.stringify(v);if(index.has(k))out[index.get(k)]=v;else{index.set(k,out.length);out.push(v);}});return out;};
- const merged={...old,...current,version:4,rules:merge(old.rules,current.rules),feedback:merge(old.feedback,current.feedback),activities:merge(old.activities,current.activities),spendEntries:merge(old.spendEntries,current.spendEntries),rewardRecords:merge(old.rewardRecords,current.rewardRecords),rewardActivities:merge(old.rewardActivities,current.rewardActivities),lastUpdated:new Date().toISOString()};
+ const merged={...old,...current,version:4,rules:merge(old.rules,current.rules),feedback:merge(old.feedback,current.feedback),activities:merge(old.activities,current.activities),spendEntries:merge(old.spendEntries,current.spendEntries),rewardRecords:merge(old.rewardRecords,current.rewardRecords),rewardActivities:merge(old.rewardActivities,current.rewardActivities),bankAssetActivities:merge(old.bankAssetActivities,current.bankAssetActivities),bankAssetEntries:merge(old.bankAssetEntries,current.bankAssetEntries),lastUpdated:new Date().toISOString()};
  return normalizeLoadedState(merged);
 }
 function hasBrokenText(v){return typeof v==='string'&&/[\uFFFD]/.test(v);}
-function normalizeLoadedState(x){x={...x,version:4,rules:Array.isArray(x.rules)?x.rules:[],feedback:Array.isArray(x.feedback)?x.feedback:[],activities:Array.isArray(x.activities)?x.activities:[],spendEntries:Array.isArray(x.spendEntries)?x.spendEntries:[],rewardRecords:Array.isArray(x.rewardRecords)?x.rewardRecords:[],rewardActivities:Array.isArray(x.rewardActivities)?x.rewardActivities:[]};x.rules=x.rules.map(r=>{if(r&&r.id==='rule-super-transit'&&(hasBrokenText(r.name)||hasBrokenText(r.notes)))return {...r,name:defaultRule.name,notes:defaultRule.notes};return r;});x.activities=x.activities.map(normalizeActivity);return x;}
+function normalizeLoadedState(x){x={...x,version:4,rules:Array.isArray(x.rules)?x.rules:[],feedback:Array.isArray(x.feedback)?x.feedback:[],activities:Array.isArray(x.activities)?x.activities:[],spendEntries:Array.isArray(x.spendEntries)?x.spendEntries:[],rewardRecords:Array.isArray(x.rewardRecords)?x.rewardRecords:[],rewardActivities:Array.isArray(x.rewardActivities)?x.rewardActivities:[],bankAssetActivities:Array.isArray(x.bankAssetActivities)?x.bankAssetActivities:[],bankAssetEntries:Array.isArray(x.bankAssetEntries)?x.bankAssetEntries:[]};x.rules=x.rules.map(r=>{if(r&&r.id==='rule-super-transit'&&(hasBrokenText(r.name)||hasBrokenText(r.notes)))return {...r,name:defaultRule.name,notes:defaultRule.notes};return r;});x.activities=x.activities.map(normalizeActivity);return x;}
 let state=load();
 function save(){state.lastUpdated=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
-function switchTab(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='panel-'+name));if(name==='rules')renderRules();if(name==='activities'){renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderGenericActivities();}if(name==='history')renderHistory();if(name==='recommend')renderRecommendations();}
+function switchTab(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='panel-'+name));if(name==='rules')renderRules();if(name==='activities'){renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderGenericActivities();}if(name==='history')renderHistory();if(name==='recommend')renderRecommendations();if(name==='assets'){renderAssetActivities();renderAssetEntries();refreshAssetActivityChoices();}}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
 $('when').value=nowLocal();$('platform').value='transport';$('channel').value='alipay';
 function getScene(){return {amount:Math.max(0,Number($('spend').value)||0),scene:$('scene').value,platform:$('platform').value,channel:$('channel').value,when:$('when').value,extraCost:Math.max(0,Number($('extraCost').value)||0)};}
@@ -353,7 +394,7 @@ function backupPayload(){return {backupFormat:'card-recommender-backup',backupVe
 function downloadBackup(name='card-recommender-backup'){const blob=new Blob([JSON.stringify(backupPayload(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 $('exportBtn').addEventListener('click',()=>{downloadBackup();$('dataStatus').textContent='完整备份已生成（包含主数据、自定义平台和自定义场景）。';});
 $('importBtn').addEventListener('click',()=>$('importFile').click());
-$('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const raw=JSON.parse(await f.text());const x=raw.state&&Array.isArray(raw.state.rules)?raw.state:raw;if(!Array.isArray(x.rules)||!Array.isArray(x.feedback))throw new Error('文件结构不正确或不是本工具备份');const mode=prompt('请选择导入方式：\n1 = 恢复备份（替换当前数据，导入前自动下载当前备份）\n2 = 合并数据（按ID去重，保留当前数据）\n请输入 1 或 2：','2');if(!['1','2'].includes(mode))return;downloadBackup('card-recommender-before-import');const incoming=normalizeLoadedState(x);if(mode==='1'){state=incoming;}else{const merge=(a,b)=>{const out=Array.isArray(a)?a.slice():[];const ix=new Map(out.map((v,i)=>[String(v?.id??JSON.stringify(v)),i]));(b||[]).forEach(v=>{const k=String(v?.id??JSON.stringify(v));if(ix.has(k))out[ix.get(k)]=v;else{ix.set(k,out.length);out.push(v);}});return out;};state={...state,...incoming,version:4,rules:merge(state.rules,incoming.rules),feedback:merge(state.feedback,incoming.feedback),activities:merge(state.activities,incoming.activities),spendEntries:merge(state.spendEntries,incoming.spendEntries),rewardRecords:merge(state.rewardRecords,incoming.rewardRecords),rewardActivities:merge(state.rewardActivities,incoming.rewardActivities)};}if(raw.customPlatforms&&Array.isArray(raw.customPlatforms))customPlatforms=mode==='1'?raw.customPlatforms:[...new Map([...customPlatforms,...raw.customPlatforms].map(v=>[v.value,v])).values()];if(raw.customScenes&&Array.isArray(raw.customScenes))customScenes=mode==='1'?raw.customScenes:[...new Map([...customScenes,...raw.customScenes].map(v=>[v.value,v])).values()];localStorage.setItem(PLATFORM_CUSTOM_KEY,JSON.stringify(customPlatforms));localStorage.setItem(SCENE_CUSTOM_KEY,JSON.stringify(customScenes));save();applySceneOptions();renderRules();renderHistory();renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderMatchingActivities();renderRecommendations();renderGenericActivities();$('dataStatus').textContent=mode==='1'?'备份恢复成功。':'数据合并成功；同ID记录以导入文件为准，其他记录已保留。';}catch(err){$('dataStatus').textContent='导入失败：'+err.message+'。原有数据未主动清空。';}finally{e.target.value='';}});
+$('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const raw=JSON.parse(await f.text());const x=raw.state&&Array.isArray(raw.state.rules)?raw.state:raw;if(!Array.isArray(x.rules)||!Array.isArray(x.feedback))throw new Error('文件结构不正确或不是本工具备份');const mode=prompt('请选择导入方式：\n1 = 恢复备份（替换当前数据，导入前自动下载当前备份）\n2 = 合并数据（按ID去重，保留当前数据）\n请输入 1 或 2：','2');if(!['1','2'].includes(mode))return;downloadBackup('card-recommender-before-import');const incoming=normalizeLoadedState(x);if(mode==='1'){state=incoming;}else{const merge=(a,b)=>{const out=Array.isArray(a)?a.slice():[];const ix=new Map(out.map((v,i)=>[String(v?.id??JSON.stringify(v)),i]));(b||[]).forEach(v=>{const k=String(v?.id??JSON.stringify(v));if(ix.has(k))out[ix.get(k)]=v;else{ix.set(k,out.length);out.push(v);}});return out;};state={...state,...incoming,version:4,rules:merge(state.rules,incoming.rules),feedback:merge(state.feedback,incoming.feedback),activities:merge(state.activities,incoming.activities),spendEntries:merge(state.spendEntries,incoming.spendEntries),rewardRecords:merge(state.rewardRecords,incoming.rewardRecords),rewardActivities:merge(state.rewardActivities,incoming.rewardActivities),bankAssetActivities:merge(state.bankAssetActivities,incoming.bankAssetActivities),bankAssetEntries:merge(state.bankAssetEntries,incoming.bankAssetEntries)};}if(raw.customPlatforms&&Array.isArray(raw.customPlatforms))customPlatforms=mode==='1'?raw.customPlatforms:[...new Map([...customPlatforms,...raw.customPlatforms].map(v=>[v.value,v])).values()];if(raw.customScenes&&Array.isArray(raw.customScenes))customScenes=mode==='1'?raw.customScenes:[...new Map([...customScenes,...raw.customScenes].map(v=>[v.value,v])).values()];localStorage.setItem(PLATFORM_CUSTOM_KEY,JSON.stringify(customPlatforms));localStorage.setItem(SCENE_CUSTOM_KEY,JSON.stringify(customScenes));save();applySceneOptions();renderRules();renderHistory();renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderMatchingActivities();renderRecommendations();renderGenericActivities();$('dataStatus').textContent=mode==='1'?'备份恢复成功。':'数据合并成功；同ID记录以导入文件为准，其他记录已保留。';}catch(err){$('dataStatus').textContent='导入失败：'+err.message+'。原有数据未主动清空。';}finally{e.target.value='';}});
 $('clearBtn').addEventListener('click',()=>{if(confirm('确定清空本工具的全部数据？建议先导出备份。')){state=initialState();save();clearForm();clearActivityForm();clearSpendRecordForm();renderRules();renderHistory();renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderMatchingActivities();renderRecommendations();renderGenericActivities();$('dataStatus').textContent='已清空主数据。自定义平台和场景配置仍保留。';}});
 function uid(){return 'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -399,7 +440,99 @@ const oldRenderActivityChoices=renderActivityChoices;renderActivityChoices=funct
 const originalSpendSubmit=$('spendRecordForm');
 const spendSubmitListener=originalSpendSubmit.cloneNode(true); // avoid changing legacy listener; custom validation is delegated by wrapper below
 
-updateTypeFields();renderRecommendations();renderRules();renderHistory();clearActivityForm();clearSpendRecordForm();renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderMatchingActivities();renderGenericActivities();save();
+updateTypeFields();renderRecommendations();
+// ===== 银行金融资产月日均活动模块（V2.4） =====
+let assetTierDraft=[];
+function assetMonthDays(month){if(!month)return 0;const [y,m]=month.split('-').map(Number);return new Date(y,m,0).getDate();}
+function assetMoney(n){return '¥'+(Number(n)||0).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function assetTierEditor(){
+ const root=$('assetTiersEditor');if(!root)return;
+ root.innerHTML=assetTierDraft.map((t,i)=>`<div class="rule-item"><div class="grid"><div class="field"><label>月日均门槛（元）</label><input type="number" min="0" step="0.01" data-tier="threshold" data-i="${i}" value="${escAttr(t.threshold??'')}" placeholder="例如 100000"></div><div class="field"><label>奖励类型</label><select data-tier="rewardType" data-i="${i}"><option value="cash" ${t.rewardType==='cash'?'selected':''}>现金 / 立减金（元）</option><option value="points" ${t.rewardType==='points'?'selected':''}>积分（数量）</option><option value="other" ${t.rewardType==='other'?'selected':''}>其他权益</option></select></div><div class="field"><label>奖励金额 / 数量</label><input type="number" min="0" step="0.01" data-tier="reward" data-i="${i}" value="${escAttr(t.reward??'')}" placeholder="填写奖励"></div><div class="field"><label>奖励说明</label><input data-tier="label" data-i="${i}" value="${escAttr(t.label||'')}" placeholder="例如 50元微信立减金 / 贵宾权益"></div></div><div class="actions"><button type="button" class="danger small" data-tier-del="${i}">删除此档</button></div></div>`).join('')||'<div class="empty">请至少添加一个奖励档位。</div>';
+ root.querySelectorAll('[data-tier]').forEach(el=>el.addEventListener('change',()=>{const i=Number(el.dataset.i),k=el.dataset.tier;assetTierDraft[i][k]=el.value;}));
+ root.querySelectorAll('[data-tier-del]').forEach(b=>b.onclick=()=>{assetTierDraft.splice(Number(b.dataset.tierDel),1);assetTierEditor();});
+}
+function clearAssetActivityForm(){
+ $('assetActivityForm').reset();$('assetActivityId').value='';$('assetMonth').value=todayLocal().slice(0,7);$('assetStart').value=$('assetMonth').value+'-01';$('assetEnd').value=$('assetMonth').value+'-'+String(assetMonthDays($('assetMonth').value)).padStart(2,'0');assetTierDraft=[];assetTierEditor();$('assetActivityForm').classList.add('form-collapsed');
+}
+function clearAssetEntryForm(){ $('assetEntryForm').reset();$('assetEntryId').value='';$('assetEntryDate').value=todayLocal();$('assetEntryForm').classList.add('form-collapsed');}
+function refreshAssetActivityChoices(){
+ const sel=$('assetEntryActivity');if(!sel)return;const old=sel.value;
+ sel.innerHTML='<option value="">请选择活动</option>'+(state.bankAssetActivities||[]).map(a=>`<option value="${escAttr(a.id)}">${esc(a.bank)} · ${esc(a.month)}</option>`).join('');
+ if((state.bankAssetActivities||[]).some(a=>a.id===old))sel.value=old;
+}
+function assetDailySeries(a){
+ const days=assetMonthDays(a.month), start=Math.max(1,Number((a.start||a.month+'-01').slice(8,10))), end=Math.min(days,Number((a.end||a.month+'-'+days).slice(8,10)));
+ const today=todayLocal(), monthNow=today.slice(0,7);
+ const elapsedEnd=a.month<monthNow?end:a.month>monthNow?start-1:Math.min(end,Number(today.slice(8,10)));
+ const elapsedDays=Math.max(0,elapsedEnd-start+1);
+ const entries=(state.bankAssetEntries||[]).filter(e=>e.activityId===a.id&&e.date>=a.start&&e.date<=a.end&&e.date<=today).sort((x,y)=>x.date.localeCompare(y.date));
+ const byDate=new Map(entries.map(e=>[e.date,Number(e.amount)||0]));
+ const values=[];let last=null,unknown=0;
+ for(let d=start;d<=elapsedEnd;d++){const date=a.month+'-'+String(d).padStart(2,'0');if(byDate.has(date))last=byDate.get(date);if(last===null){unknown++;values.push(null);}else values.push(last);}
+ const known=values.filter(v=>v!==null),sum=known.reduce((s,v)=>s+v,0);
+ const totalDays=end-start+1,remainingDays=Math.max(0,totalDays-elapsedDays);
+ return {values,knownDays:known.length,unknownDays:unknown,sum,avg:known.length?sum/known.length:0,days:totalDays,elapsedDays,remainingDays,entries};
+}
+function assetRequiredFuture(a,series,threshold){
+ if(series.unknownDays>0)return {value:null,remain:series.remainingDays,elapsed:series.elapsedDays,reason:'统计期前段存在未记录日期，请先补录首条余额或补齐记录'};
+ if(series.remainingDays===0)return {value:null,remain:0,elapsed:series.elapsedDays,reason:'统计期已结束或已无剩余天数'};
+ return {value:(threshold*series.days-series.sum)/series.remainingDays,remain:series.remainingDays,elapsed:series.elapsedDays};
+}
+function assetTierLabel(t){return t.rewardType==='cash'?assetMoney(t.reward):t.rewardType==='points'?`${Number(t.reward)||0} 积分`:t.label||'其他权益';}
+function renderAssetActivities(){
+ const root=$('assetActivityList');if(!root)return;
+ if(!(state.bankAssetActivities||[]).length){root.innerHTML='<div class="empty">暂无资产达标活动。点击“新增资产活动”创建一条活动，并在活动下设置多个奖励档位。</div>';return;}
+ root.innerHTML=state.bankAssetActivities.map(a=>{
+  const s=assetDailySeries(a),tiers=(a.tiers||[]).slice().sort((x,y)=>Number(x.threshold)-Number(y.threshold));
+  const targetReached=tiers.filter(t=>s.avg>=Number(t.threshold));
+  const next=tiers.find(t=>s.avg<Number(t.threshold));
+  const proj=next?assetRequiredFuture(a,s,Number(next.threshold)):null;
+  const avgText=s.knownDays?assetMoney(s.avg):'暂无可计算数据';
+  const nextText=!next?'已达到全部档位':proj?.value!==null&&proj?.value!==undefined?`剩余 ${proj.remain} 天平均需维持 ${assetMoney(Math.max(0,proj.value))}`:proj?.reason||'暂无法测算';
+  return `<article class="rule-item"><div class="section-heading"><div><strong>${esc(a.bank)}</strong><div class="muted">${esc(a.month)} · ${esc(a.start)} 至 ${esc(a.end)}</div></div><div class="actions"><button class="secondary small" data-asset-edit="${escAttr(a.id)}">编辑</button><button class="danger small" data-asset-del="${escAttr(a.id)}">删除</button></div></div><div class="muted">资产口径：${esc(a.scope)}</div><div class="stats"><div class="stat"><span>当前截至目前月日均</span><strong>${avgText}</strong></div><div class="stat"><span>已覆盖 / 已过统计天数</span><strong>${s.knownDays} / ${s.elapsedDays}</strong></div><div class="stat"><span>当前已达到档位</span><strong>${targetReached.length}</strong></div><div class="stat"><span>下一档门槛</span><strong>${next?assetMoney(next.threshold):'—'}</strong></div></div><div class="reason"><strong>下一档测算：</strong>${esc(nextText)}</div><div class="reason"><strong>奖励档位：</strong>${tiers.map(t=>`${assetMoney(t.threshold)} → ${esc(assetTierLabel(t))}`).join('；')||'未设置'} </div>${esc(a.notes||'')}</article>`;
+ }).join('');
+ root.querySelectorAll('[data-asset-edit]').forEach(b=>b.onclick=()=>editAssetActivity(b.dataset.assetEdit));
+ root.querySelectorAll('[data-asset-del]').forEach(b=>b.onclick=()=>{if(!confirm('删除该资产活动？其每日资产记录也会一并删除。'))return;state.bankAssetActivities=state.bankAssetActivities.filter(a=>a.id!==b.dataset.assetDel);state.bankAssetEntries=state.bankAssetEntries.filter(e=>e.activityId!==b.dataset.assetDel);save();renderAssetActivities();renderAssetEntries();refreshAssetActivityChoices();});
+}
+function editAssetActivity(id){
+ const a=state.bankAssetActivities.find(x=>x.id===id);if(!a)return;
+ $('assetActivityForm').classList.remove('form-collapsed');$('assetActivityId').value=a.id;$('assetBank').value=a.bank;$('assetMonth').value=a.month;$('assetStart').value=a.start;$('assetEnd').value=a.end;$('assetScope').value=a.scope;$('assetNotes').value=a.notes||'';assetTierDraft=JSON.parse(JSON.stringify(a.tiers||[]));assetTierEditor();$('assetActivityForm').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderAssetEntries(){
+ const root=$('assetEntryRows');if(!root)return;const entries=(state.bankAssetEntries||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+ root.innerHTML=entries.map(e=>{const a=state.bankAssetActivities.find(x=>x.id===e.activityId);return `<tr><td>${esc(e.date)}</td><td>${esc(a?.bank||'（活动已删除）')}</td><td>${assetMoney(e.amount)}</td><td>${esc(e.notes||'')}</td><td><button class="secondary small" data-asset-entry-edit="${escAttr(e.id)}">编辑</button> <button class="danger small" data-asset-entry-del="${escAttr(e.id)}">删除</button></td></tr>`}).join('');
+ $('assetEntryEmpty').classList.toggle('hidden',entries.length>0);
+ root.querySelectorAll('[data-asset-entry-edit]').forEach(b=>b.onclick=()=>{const e=state.bankAssetEntries.find(x=>x.id===b.dataset.assetEntryEdit);if(!e)return;$('assetEntryForm').classList.remove('form-collapsed');$('assetEntryId').value=e.id;$('assetEntryActivity').value=e.activityId;$('assetEntryDate').value=e.date;$('assetEntryAmount').value=e.amount;$('assetEntryNotes').value=e.notes||'';});
+ root.querySelectorAll('[data-asset-entry-del]').forEach(b=>b.onclick=()=>{if(confirm('删除这条每日资产记录？')){state.bankAssetEntries=state.bankAssetEntries.filter(e=>e.id!==b.dataset.assetEntryDel);save();renderAssetActivities();renderAssetEntries();}});
+}
+$('newAssetActivityBtn').onclick=()=>{$('assetActivityForm').classList.remove('form-collapsed');clearAssetActivityForm();$('assetActivityForm').classList.remove('form-collapsed');$('assetActivityForm').scrollIntoView({behavior:'smooth',block:'start'});};
+$('addAssetTierBtn').onclick=()=>{assetTierDraft.push({threshold:'',rewardType:'cash',reward:'',label:''});assetTierEditor();};
+$('cancelAssetActivityBtn').onclick=clearAssetActivityForm;
+$('assetMonth').addEventListener('change',()=>{const m=$('assetMonth').value;if(m){$('assetStart').value=m+'-01';$('assetEnd').value=m+'-'+String(assetMonthDays(m)).padStart(2,'0');}});
+$('assetActivityForm').onsubmit=e=>{
+ e.preventDefault();const id=$('assetActivityId').value||uid();
+ const a={id,bank:$('assetBank').value.trim(),month:$('assetMonth').value,start:$('assetStart').value,end:$('assetEnd').value,scope:$('assetScope').value.trim(),notes:$('assetNotes').value.trim(),tiers:assetTierDraft.map(t=>({...t,threshold:Number(t.threshold),reward:Number(t.reward)})).sort((x,y)=>x.threshold-y.threshold)};
+ const st=$('assetActivityStatus');
+ if(!a.bank||!a.month||!a.start||!a.end||a.end<a.start||a.start.slice(0,7)!==a.month||a.end.slice(0,7)!==a.month||!a.scope){st.textContent='请填写活动名称、同一月份内的统计日期及资产口径。';st.className='status bad';return;}
+ if(!a.tiers.length||a.tiers.some(t=>!Number.isFinite(t.threshold)||t.threshold<=0||!Number.isFinite(t.reward)||t.reward<0)){st.textContent='请至少添加一个有效档位，门槛必须大于0，奖励不能为负数。';st.className='status bad';return;}
+ if(new Set(a.tiers.map(t=>t.threshold)).size!==a.tiers.length){st.textContent='奖励档位的月日均门槛不能重复。';st.className='status bad';return;}
+ const ix=state.bankAssetActivities.findIndex(x=>x.id===id);if(ix<0)state.bankAssetActivities.push(a);else state.bankAssetActivities[ix]=a;
+ save();clearAssetActivityForm();refreshAssetActivityChoices();renderAssetActivities();st.textContent='资产活动已保存。';st.className='status ok';
+};
+$('newAssetEntryBtn').onclick=()=>{refreshAssetActivityChoices();if(!state.bankAssetActivities.length){alert('请先创建银行资产达标活动。');return;}clearAssetEntryForm();$('assetEntryForm').classList.remove('form-collapsed');$('assetEntryForm').scrollIntoView({behavior:'smooth',block:'start'});};
+$('cancelAssetEntryBtn').onclick=clearAssetEntryForm;
+$('assetEntryForm').onsubmit=e=>{
+ e.preventDefault();const id=$('assetEntryId').value||uid(),activityId=$('assetEntryActivity').value,date=$('assetEntryDate').value,amount=Number($('assetEntryAmount').value),notes=$('assetEntryNotes').value.trim(),a=state.bankAssetActivities.find(x=>x.id===activityId),st=$('assetEntryStatus');
+ if(!a||!date||date<a.start||date>a.end||date.slice(0,7)!==a.month||!Number.isFinite(amount)||amount<0){st.textContent='请选择活动统计期内的日期，并填写有效的非负资产余额。';st.className='status bad';return;}
+ const entry={id,activityId,date,amount,notes};const ix=state.bankAssetEntries.findIndex(x=>x.id===id);
+ // 同一活动同一天仅保留一条余额，重复日期保存时覆盖旧值，避免重复计入日均。
+ const same=state.bankAssetEntries.findIndex(x=>x.activityId===activityId&&x.date===date&&x.id!==id);
+ if(same>=0)state.bankAssetEntries.splice(same,1);
+ if(ix>=0)state.bankAssetEntries[ix]=entry;else state.bankAssetEntries.push(entry);
+ save();clearAssetEntryForm();renderAssetActivities();renderAssetEntries();st.textContent='每日资产余额已保存；同一活动同一天只按一条记录计算。';st.className='status ok';
+};
+
+renderRules();renderHistory();clearActivityForm();clearSpendRecordForm();renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderMatchingActivities();renderGenericActivities();save();
 })();
 </script>
 </body>
