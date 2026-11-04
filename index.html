@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<title>消费优惠与用卡推荐 V2.9 测试版</title>
+<title>消费优惠与用卡推荐 V2.21 测试版</title>
 <style>
 :root{--primary:#0f766e;--primary2:#115e59;--bg:#f4f7f8;--line:#dfe7e8;--ink:#172b2b;--muted:#667779;--green:#dcfce7;--amber:#fff7d6;--red:#fee2e2}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
@@ -12,17 +12,19 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
 .wrap{max-width:1050px;margin:auto;padding:14px}.notice{padding:11px 13px;border-radius:10px;background:#e8f5f3;color:#205b57;font-size:13px;margin-bottom:13px;border:1px solid #c9e7e2}
 .tabs{display:flex;gap:7px;overflow:auto;margin-bottom:14px}.tab,button{font:inherit;font-weight:650;cursor:pointer;border:0;border-radius:9px;padding:10px 13px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line)}.tab.on,button.primary{background:var(--primary);color:#fff}button.secondary{background:#e9eff0;color:#284344}button.danger{background:var(--red);color:#991b1b}button.small{padding:6px 9px;font-size:12px}
 .panel{display:none}.panel.on{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px;box-shadow:0 2px 7px #102b2b08}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 7px}.muted,.help{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{min-width:0}.full{grid-column:1/-1}.checkgroup{display:flex;flex-wrap:wrap;gap:8px;padding:8px;border:1px solid #c8d4d5;border-radius:8px;min-height:41px}.checkgroup label{display:flex;align-items:center;gap:5px;margin:0;font-weight:500}.checkgroup input{width:auto;min-height:auto;margin:0}label{display:block;font-weight:650;font-size:13px;margin-bottom:5px}input,select,textarea{width:100%;min-height:41px;border:1px solid #c8d4d5;border-radius:8px;padding:9px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:70px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+ .scene-match-options{display:none;flex-wrap:wrap;align-items:center;gap:7px;margin-top:8px;padding:9px;border:1px solid #9bc9c2;border-radius:10px;background:#f3fbf9}.scene-match-options:empty{display:none!important}.scene-match-options .scene-match-caption{width:100%;font-size:12px;font-weight:700;color:#426461;margin-bottom:1px}.scene-match-options .scene-match-option{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 12px;border:1px solid #0f766e;background:#e1f4f0;color:#115e59;border-radius:18px;font-size:13px;font-weight:650;cursor:pointer;white-space:normal}.scene-match-options .scene-match-option:hover{background:#ccebe5}.scene-match-options .scene-match-option:active{background:#b8e1d9}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:13px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}.stat span{display:block;font-size:12px;color:var(--muted)}.stat strong{font-size:22px}.recommendation{border:1px solid var(--line);border-radius:13px;padding:14px;margin:10px 0;background:#fff}.rec-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}.rec-head>div{min-width:0;overflow-wrap:anywhere}.rec-head>div:last-child{text-align:right;max-width:48%;overflow-wrap:anywhere}.rec-title{font-weight:750;font-size:16px}.rank{background:#e0f2f1;color:#115e59;border-radius:7px;padding:3px 7px;font-size:12px;white-space:nowrap}.money{font-size:24px;font-weight:800;color:#087f5b;margin:7px 0}.pill{display:inline-block;background:#edf2f2;border-radius:99px;padding:3px 8px;font-size:11px;margin:3px 4px 0 0}.pill.good{background:var(--green);color:#166534}.pill.warn{background:var(--amber);color:#854d0e}.reason{font-size:13px;color:#526566;margin:7px 0}.feedback{background:#f7faf9;border-radius:10px;padding:11px;margin-top:10px}.feedback[hidden]{display:none}.empty{text-align:center;padding:24px;color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px 7px;border-bottom:1px solid #e8eeee;text-align:left;vertical-align:top}.tablewrap{overflow:auto}.status{font-size:13px;margin:8px 0}.status.ok{color:#087f5b}.status.bad{color:#b42318}.rule-item{padding:12px 0;border-bottom:1px solid #edf0f0}.progress{height:9px;background:#e8eeee;border-radius:99px;overflow:hidden;margin:7px 0}.progress>span{display:block;height:100%;background:var(--primary)}.activity-item{padding:13px 0;border-bottom:1px solid #edf0f0}.activity-item:last-child{border-bottom:0}.activity-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.mini-stat{background:#f7faf9;padding:9px;border-radius:9px}.mini-stat span{display:block;font-size:11px;color:var(--muted)}.mini-stat strong{font-size:16px}.checklist{display:flex;flex-wrap:wrap;gap:8px}.checklist label{display:flex;align-items:center;gap:5px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;font-weight:500}.checklist input{width:auto;min-height:0}.rule-item:last-child{border-bottom:0}.daily-breakdown{margin-top:9px;background:#f7faf9;border-radius:9px;padding:8px 10px}.daily-breakdown summary{cursor:pointer;font-size:12px;font-weight:650;color:var(--primary2)}.daily-breakdown table{margin-top:6px}.hidden{display:none!important}.file-picker-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}.form-collapsed{display:none!important}.quick-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.quick-actions button{width:100%;min-height:48px}.archive-group{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.archive-group summary{cursor:pointer;font-weight:700;color:var(--primary2);padding:6px 0}.form-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
 @media(min-width:720px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding:20px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:560px){header .wrap{align-items:flex-start;gap:10px}h1{font-size:21px}.version-stamp{font-size:11px;white-space:normal;max-width:112px}}
 @media(max-width:560px){.rec-head>div:last-child{max-width:100%;width:100%;text-align:left}}
 @media(max-width:440px){.quick-actions{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.rec-head{align-items:flex-start}.section-heading{align-items:flex-start;flex-direction:column}.new-rule-btn{width:100%}}
+.help:empty{display:none}.scene-match-options:empty{display:none}.scene-match-options:not(:empty){display:flex!important;flex-wrap:wrap;gap:7px;margin-top:8px}.scene-match-options .scene-match-option{display:inline-flex;align-items:center;min-height:34px;padding:6px 11px;border:1px solid #0f766e;background:#e8f5f3;color:#115e59;border-radius:18px;font-size:13px;font-weight:600;cursor:pointer;white-space:normal}
 </style>
 </head>
 <body>
-<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V2.16 测试版<br>更新于 2026-11-04（UTC+8）</div></div></header>
+<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V2.21 测试版<br>更新于 2026-11-04（UTC+8）</div></div></header>
 <main class="wrap">
-<div class="notice"><details><summary>使用说明：数据保存在当前浏览器；首次使用请核对旧数据并导出备份。</summary><div class="notice-full">本工具数据保存在当前浏览器，不会自动同步到其他设备；消费推荐数据与周期任务等其他工具分开保存。页面会兼容读取本工具的旧版数据，升级前后建议先导出 JSON 备份。优惠规则可设置活动日期、每日时段和每日次数；累计达标活动可按活动期间、自然日、自然周或自然月统计；银行资产活动按每日余额测算月日均。内置的「支付宝超级出行卡」仅为示例，活动有效期及资格请以平台实际规则为准。积分只记录数量，不折算人民币；只有实际到账的现金返现计入收益。</div></details></div>
+<div class="notice"><details><summary>使用说明：数据保存在当前浏览器；首次使用请核对旧数据并导出备份。</summary><div class="notice-full">本工具数据保存在当前浏览器，不会自动同步到其他设备；消费推荐数据与周期任务等其他工具分开保存。V2.21 沿用原有存储键并兼容读取旧版数据，不会主动清空或重置已有规则、反馈和活动；升级前后建议先导出 JSON 备份。优惠规则可设置活动日期、每日时段和每日次数；累计达标活动可按活动期间、自然日、自然周或自然月统计；银行资产活动按每日余额测算月日均。内置的「支付宝超级出行卡」仅为示例，活动有效期及资格请以平台实际规则为准。积分只记录数量，不折算人民币；只有实际到账的现金返现计入收益。</div></details></div>
 <nav class="tabs">
 <button class="tab on" data-tab="recommend">场景推荐</button><button class="tab" data-tab="rules">优惠规则</button><button class="tab" data-tab="activities">累计达标活动</button><button class="tab" data-tab="assets">资产达标活动</button><button class="tab" data-tab="history">使用反馈</button><button class="tab" data-tab="data">数据备份</button>
 </nav>
@@ -31,7 +33,7 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
 <h2>本次消费场景</h2>
 <div class="grid">
 <div class="field"><label for="spend">预计消费金额（元）</label><input id="spend" type="number" min="0" step="0.01" value="4" /></div>
-<div class="field"><label for="sceneInput">消费场景</label><input id="sceneInput" list="sceneChoices" placeholder="输入场景关键词，如：地铁、单车" autocomplete="off"><datalist id="sceneChoices"></datalist><button type="button" class="secondary small custom-create hidden" id="createSceneChoice">＋创建此场景</button><div class="help" id="sceneMatchHint">输入关键词匹配已有场景；没有匹配项时可创建。</div></div>
+<div class="field"><label for="sceneInput">消费场景</label><input id="sceneInput" placeholder="输入场景关键词，如：地铁、餐饮、电影" autocomplete="off"><datalist id="sceneChoices"></datalist><button type="button" class="secondary small custom-create hidden" id="createSceneChoice">＋创建此场景</button><div class="help" id="sceneMatchHint">输入关键词匹配已有场景；没有匹配项时可创建。</div><div id="sceneMatchOptions" class="scene-match-options" aria-live="polite"></div></div>
 <div class="field"><label for="platformInput">消费平台 / 商户</label><input id="platformInput" list="platformChoices" placeholder="输入平台或商户，如：京东、猫眼" autocomplete="off"><datalist id="platformChoices"></datalist><button type="button" class="secondary small custom-create hidden" id="createPlatformChoice">＋创建此平台 / 商户</button><div class="help" id="platformMatchHint">默认不限平台；输入关键词匹配，也可创建自定义平台。</div></div>
 <div class="field"><label for="channelInput">支付渠道 / 方式</label><input id="channelInput" list="channelChoices" placeholder="输入支付方式，如：支付宝、云闪付" autocomplete="off"><datalist id="channelChoices"></datalist><button type="button" class="secondary small custom-create hidden" id="createChannelChoice">＋创建此支付渠道</button><div class="help" id="channelMatchHint">默认不限支付渠道；输入关键词匹配，没有匹配项时可创建。</div></div>
 <div class="field"><label for="when">消费日期时间</label><input id="when" type="datetime-local" /></div>
@@ -242,8 +244,40 @@ const BASE_SCENES = ['subway','bus','dining','shopping','online','other'];
 const SCENE_GROUPS = {'交通出行':['subway','bus','shared-bike','taxi','rail','flight','parking','gas','charging'],'餐饮美食':['dining','restaurant','fastfood','coffee','takeout'],'购物消费':['shopping','online','supermarket','convenience','mall','electronics'],'娱乐休闲':['movie','concert','theatre','themepark','game','ktv'],'旅游住宿':['hotel','travel'],'生活服务':['medical','beauty','utilities'],'数字服务':['video','music','software','course'],'其他':['other']};
 const sceneOptions = ['subway','bus','dining','shopping','online','other'];
 function ruleScenes(rule){const a=Array.isArray(rule.scenes)?rule.scenes:(rule.scene?[rule.scene]:['any']);return a.length?a:['any'];}
-function canonicalScene(value){const raw=String(value??'').trim().toLocaleLowerCase();if(!raw||['any','不限','不限场景'].includes(raw))return 'any';const aliases={'共享单车':'shared-bike','单车':'shared-bike','哈啰单车':'shared-bike','青桔单车':'shared-bike','自行车':'shared-bike','地铁':'subway','公交':'bus','餐饮':'dining','电影':'movie','网约车':'taxi'};if(aliases[raw])return aliases[raw];if(sceneNames[raw])return raw;for(const [id,label] of Object.entries(sceneNames)){if(label.toLocaleLowerCase()===raw)return id;}return raw;}
-function scenesEqual(a,b){return canonicalScene(a)===canonicalScene(b);}
+function canonicalScene(value){
+ const raw=String(value??'').trim().toLocaleLowerCase();
+ if(!raw||['any','不限','不限场景','不限 / 未指定','未指定'].includes(raw))return 'any';
+ const aliases={'共享单车':'shared-bike','单车':'shared-bike','哈啰单车':'shared-bike','青桔单车':'shared-bike','自行车':'shared-bike','地铁':'subway','轨道交通':'subway','公交':'bus','公共汽车':'bus','公共交通':'public-transport','交通出行':'public-transport','餐饮':'dining','餐饮美食':'food','美食':'food','外卖':'takeout','咖啡':'coffee','奶茶':'coffee','快餐':'fastfood','正餐':'restaurant','购物消费':'shopping-group','娱乐休闲':'leisure','旅游住宿':'travel-group','电影':'movie','网约车':'taxi'};
+ if(aliases[raw])return aliases[raw];
+ if(sceneNames[raw])return raw;
+ for(const [id,label] of Object.entries(sceneNames)){if(label.toLocaleLowerCase()===raw)return id;}
+ // 兼容旧数据中直接保存中文场景名称或带分类前缀的名称
+ for(const [id,label] of Object.entries(sceneNames)){if(label.toLocaleLowerCase().includes(raw)&&raw.length>=2)return id;}
+ return raw;
+}
+const SCENE_FAMILY={
+ 'public-transport':['subway','bus'],
+ 'dining':['dining','restaurant','fastfood','coffee','takeout'],
+ 'shopping':['shopping','online','supermarket','convenience','mall','electronics'],
+ 'leisure':['movie','concert','theatre','themepark','game','ktv'],
+ '交通出行':['subway','bus','shared-bike','taxi','rail','flight','parking','gas','charging'],
+ 'food':['dining','restaurant','fastfood','coffee','takeout'],
+ '餐饮美食':['dining','restaurant','fastfood','coffee','takeout'],
+ 'shopping-group':['shopping','online','supermarket','convenience','mall','electronics'],
+ '购物消费':['shopping','online','supermarket','convenience','mall','electronics'],
+ 'leisure':['movie','concert','theatre','themepark','game','ktv'],
+ '娱乐休闲':['movie','concert','theatre','themepark','game','ktv'],
+ 'travel-group':['hotel','travel'],
+ '旅游住宿':['hotel','travel']
+};
+function scenesEqual(a,b){
+ const x=canonicalScene(a),y=canonicalScene(b);
+ if(x===y)return true;
+ const xFamily=SCENE_FAMILY[x],yFamily=SCENE_FAMILY[y];
+ if(xFamily&&xFamily.includes(y))return true;
+ if(yFamily&&yFamily.includes(x))return true;
+ return false;
+}
 function sceneLabel(rule){const a=ruleScenes(rule);return a.includes('any')?'不限场景':a.map(x=>sceneNames[x]||x).join('、');}
 const platformNames = {jd:'京东',vip:'唯品会',taobao:'淘宝',tmall:'天猫','douyin-shop':'抖音商城',pdd:'拼多多',supermarket:'线下商超',convenience:'便利店',restaurant:'餐饮商户',transport:'交通出行',gas:'加油 / 充电',other:'其他平台 / 商户',any:'不限 / 未指定'};
 const channelNames = {alipay:'支付宝',wechat:'微信支付',unionpay:'云闪付',bestpay:'翼支付','bank-app':'银行 App','douyin-pay':'抖音支付','jd-pay':'京东支付','apple-pay':'Apple Pay / 手机 Pay',card:'银行卡直接刷卡','transit-code':'乘车码 / 出行码',other:'其他自定义渠道',any:'不限 / 未指定'};
@@ -540,11 +574,85 @@ const recommendationCatalog={
 function fillRecommendationChoices(kind){const list=$(kind+'Choices');if(!list)return;const defaults={scene:'地铁',platform:'不限 / 未指定',channel:'不限 / 未指定'};const items=recommendationCatalog[kind]();list.innerHTML=(kind==='scene'?[]:[{value:'any',label:'不限 / 未指定'}]).concat(items).map(x=>`<option value="${escAttr(x.label)}"></option>`).join('');const input=$(kind+'Input');if(input&&!input.value)input.value=defaults[kind];}
 function recommendationCandidates(kind,q){const query=(q||'').trim().toLocaleLowerCase();if(!query)return [];const items=(kind==='scene'?[]:[{value:'any',label:'不限 / 未指定'}]).concat(recommendationCatalog[kind]());return items.filter(x=>(x.label+' '+x.value).toLocaleLowerCase().includes(query));}
 function recommendationResolved(kind,q){const query=(q||'').trim().toLocaleLowerCase();if(!query)return null;const items=recommendationCatalog[kind]();const exact=items.find(x=>x.label.toLocaleLowerCase()===query||x.value.toLocaleLowerCase()===query);if(exact)return exact;const candidates=recommendationCandidates(kind,q);return candidates.length===1?candidates[0]:null;}
-function recommendationValue(kind){const input=$(kind+'Input'),q=(input?.value||'').trim();if(!q||q==='不限'||q==='不限 / 未指定'||q==='未指定')return kind==='scene'?'other':'any';const found=recommendationResolved(kind,q);return found?found.value:'custom-'+kind+'-'+q.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g,'-').replace(/^-|-$/g,'');}
+function recommendationValue(kind){const input=$(kind+'Input'),q=(input?.value||'').trim();if(!q||q==='不限'||q==='不限 / 未指定'||q==='未指定')return kind==='scene'?'other':'any';if(kind==='scene'){const normalized=canonicalScene(q);if(normalized==='any')return 'other';if(sceneNames[normalized]||SCENE_FAMILY[normalized]||recommendationCatalog.scene().some(x=>x.value===normalized))return normalized;}const found=recommendationResolved(kind,q);return found?found.value:'custom-'+kind+'-'+q.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g,'-').replace(/^-|-$/g,'');}
 function filterRecommendationChoices(kind){const q=($(kind+'Input').value||'').trim().toLowerCase(),list=$(kind+'Choices');if(!list)return;const items=(kind==='scene'?[]:[{value:'any',label:'不限 / 未指定'}]).concat(recommendationCatalog[kind]());list.innerHTML=items.filter(x=>!q||(x.label+' '+x.value).toLowerCase().includes(q)).map(x=>`<option value="${escAttr(x.label)}"></option>`).join('');}
-function updateRecommendationMatch(kind){const input=$(kind+'Input'),q=(input.value||'').trim(),candidates=recommendationCandidates(kind,q),resolved=recommendationResolved(kind,q),isAny=kind!=='scene'&&['不限','不限 / 未指定','未指定'].includes(q);const btn=$('create'+kind[0].toUpperCase()+kind.slice(1)+'Choice');if(btn)btn.classList.toggle('hidden',!q||!!resolved||isAny||candidates.length>0);const hint=$(kind+'MatchHint');if(hint)hint.textContent=resolved?'已匹配：'+resolved.label:isAny?'当前为不限':candidates.length>1?'找到多个候选项，请继续输入以缩小范围。':candidates.length===1?'已找到候选：'+candidates[0].label+'；可选择该项。':'没有找到匹配项；可创建为自定义'+({scene:'场景',platform:'平台 / 商户',channel:'支付渠道'}[kind]);}
+function updateRecommendationMatch(kind){
+ const input=$(kind+'Input'),q=(input.value||'').trim(),candidates=recommendationCandidates(kind,q),resolved=recommendationResolved(kind,q),isAny=kind!=='scene'&&['不限','不限 / 未指定','未指定'].includes(q);
+ const btn=$('create'+kind[0].toUpperCase()+kind.slice(1)+'Choice');
+ if(btn)btn.classList.toggle('hidden',!q||!!resolved||isAny||candidates.length>0);
+ const hint=$(kind+'MatchHint');
+ if(kind==='scene'){
+  const box=$('sceneMatchOptions');
+  const normalized=canonicalScene(q);
+  const base=normalized!=='any'?(recommendationCatalog.scene().find(x=>x.value===normalized)||null):null;
+  let matches=candidates;
+  if(base&&!matches.some(x=>x.value===base.value))matches=[base,...matches];
+  // 输入“餐饮/交通出行”等上级场景时，同时展示其下可选子场景。
+  const family=SCENE_FAMILY[normalized];
+  if(family)family.forEach(id=>{const item=recommendationCatalog.scene().find(x=>x.value===id);if(item&&!matches.some(x=>x.value===id))matches.push(item);});
+  if(box)box.innerHTML=q?matches.slice(0,8).map(x=>`<button type="button" data-scene-value="${escAttr(x.value)}">${esc(x.label)}</button>`).join(''):'';
+  if(box)box.querySelectorAll('[data-scene-value]').forEach(b=>b.addEventListener('click',()=>{const item=recommendationCatalog.scene().find(x=>x.value===b.dataset.sceneValue);if(item){input.value=item.label;filterRecommendationChoices('scene');updateRecommendationMatch('scene');renderRecommendations();}}));
+  // 有匹配项时只展示可点选的匹配结果，不再额外显示“无匹配”等提示；
+  // 完全没有匹配项时，显示创建按钮作为唯一引导。
+  if(hint)hint.textContent='';
+ }else if(hint){
+  // 平台、支付渠道同样只在找到候选项时显示结果说明；无匹配时交由“创建”按钮提示。
+  hint.textContent=resolved?'已匹配：'+resolved.label:isAny?'当前为不限':candidates.length>0?'匹配结果已显示在输入候选中。':'';
+ }
+}
 function createRecommendationChoice(kind){const input=$(kind+'Input'),label=(input.value||'').trim();if(!label)return;const items=recommendationCatalog[kind]();if(items.some(x=>x.label.toLowerCase()===label.toLowerCase())){alert('该选项已存在，请直接选择匹配项。');return;}const value='custom-'+kind+'-'+Date.now().toString(36);const item={value,label};if(kind==='scene'){customScenes.push(item);sceneNames[value]=label;localStorage.setItem(SCENE_CUSTOM_KEY,JSON.stringify(customScenes));applySceneOptions();}else if(kind==='platform'){customPlatforms.push(item);platformNames[value]=label;localStorage.setItem(PLATFORM_CUSTOM_KEY,JSON.stringify(customPlatforms));applySceneOptions();}else{customChannels.push(item);channelNames[value]=label;localStorage.setItem(CHANNEL_CUSTOM_KEY,JSON.stringify(customChannels));applySceneOptions();}fillRecommendationChoices(kind);input.value=label;updateRecommendationMatch(kind);renderRecommendations();}
 ['scene','platform','channel'].forEach(kind=>{fillRecommendationChoices(kind);$(kind+'Input').addEventListener('input',()=>{filterRecommendationChoices(kind);updateRecommendationMatch(kind);renderRecommendations();});$('create'+kind[0].toUpperCase()+kind.slice(1)+'Choice').addEventListener('click',()=>createRecommendationChoice(kind));});
+// V2.20：消费场景使用独立匹配面板；不绑定原生 datalist，避免 PC 浏览器下拉层遮挡结果。
+function renderVisibleSceneMatches(){
+ const input=$('sceneInput'),box=$('sceneMatchOptions'),create=$('createSceneChoice'),hint=$('sceneMatchHint');
+ if(!input||!box)return;
+ const q=(input.value||'').trim();
+ if(!q){
+  box.innerHTML='';box.style.display='none';
+  if(create)create.classList.add('hidden');
+  if(hint)hint.textContent='输入场景关键词，匹配结果会显示在输入框下方。';
+  return;
+ }
+ const catalog=recommendationCatalog.scene();
+ const normalized=canonicalScene(q);
+ const lower=q.toLocaleLowerCase();
+ let found=catalog.filter(x=>(x.label+' '+x.value).toLocaleLowerCase().includes(lower));
+ const family=SCENE_FAMILY[normalized];
+ if(family){
+  family.forEach(id=>{
+   const item=catalog.find(x=>x.value===id);
+   if(item&&!found.some(y=>y.value===item.value))found.push(item);
+  });
+ }
+ // 精确识别标准场景及其别名，例如“餐饮” -> dining。
+ const exact=catalog.find(x=>x.value===normalized||x.label.toLocaleLowerCase()===lower);
+ if(exact&&!found.some(x=>x.value===exact.value))found.unshift(exact);
+ found=found.filter((x,i,a)=>a.findIndex(y=>y.value===x.value)===i).slice(0,10);
+ if(found.length){
+  box.innerHTML='<div class="scene-match-caption">匹配场景（点击选择）</div>'+found.map(x=>`<button type="button" class="scene-match-option" data-scene-value="${escAttr(x.value)}">${esc(x.label)}</button>`).join('');
+  box.style.display='flex';
+  if(create)create.classList.add('hidden');
+  if(hint)hint.textContent='';
+  box.querySelectorAll('button[data-scene-value]').forEach(button=>button.addEventListener('click',()=>{
+   const selected=catalog.find(x=>x.value===button.dataset.sceneValue);
+   if(!selected)return;
+   input.value=selected.label;
+   filterRecommendationChoices('scene');
+   updateRecommendationMatch('scene');
+   renderVisibleSceneMatches();
+   renderRecommendations();
+  }));
+ }else{
+  box.innerHTML='';
+  box.style.display='none';
+  if(create)create.classList.remove('hidden');
+  if(hint)hint.textContent='没有找到已有场景，可以创建此场景。';
+ }
+}
+$('sceneInput').addEventListener('input',renderVisibleSceneMatches);
+$('sceneInput').addEventListener('change',renderVisibleSceneMatches);
+$('sceneInput').addEventListener('compositionend',renderVisibleSceneMatches);
+$('sceneInput').addEventListener('focus',()=>{renderVisibleSceneMatches();});
 ['scene','rScene','aScene','eScene','gaScene'].forEach(id=>addSearchAndCustom(id,'scene'));
 ['platform','rPlatform','aPlatform','ePlatform','gaPlatform'].forEach(id=>addSearchAndCustom(id,'platform'));
 ['rChannel','aChannel','eChannel'].forEach(id=>addSearchAndCustom(id,'channel'));
@@ -718,6 +826,59 @@ $('aChannelSearch').addEventListener('input',()=>{const selected=Array.from(docu
 $('aChannelAdd').addEventListener('click',()=>{const label=$('aChannelNew').value.trim();if(!label)return;let item=customChannels.find(x=>x.label.toLowerCase()===label.toLowerCase())||Object.entries(channelNames).map(([value,label])=>({value,label})).find(x=>x.label.toLowerCase()===label.toLowerCase());if(!item){item={value:'custom-channel-'+Date.now().toString(36),label};customChannels.push(item);channelNames[item.value]=label;localStorage.setItem(CHANNEL_CUSTOM_KEY,JSON.stringify(customChannels));applySceneOptions();}const selected=Array.from(document.querySelectorAll('#aChannelChoices input:checked')).map(x=>x.value);selected.push(item.value);$('aChannelNew').value='';renderLegacyChannelChoices([...new Set(selected)]);});
 
 fillActivityDatalist('aPlatformText','aPlatformOptions',customPlatforms,platformNames);fillActivityDatalist('aSceneText','aSceneOptions',customScenes,sceneNames);renderLegacyChannelChoices([]);renderRules();renderHistory();clearActivityForm();clearSpendRecordForm();renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderMatchingActivities();renderGenericActivities();save();
+})();
+</script>
+<script>
+/* V2.21 独立场景匹配兜底：不依赖主应用 IIFE 是否成功完成初始化。 */
+(function(){
+  const input=document.getElementById('sceneInput');
+  const box=document.getElementById('sceneMatchOptions');
+  const hint=document.getElementById('sceneMatchHint');
+  const create=document.getElementById('createSceneChoice');
+  if(!input||!box)return;
+  const KEY='card-recommender-custom-scenes-v1';
+  const base=[
+    ['subway','地铁'],['bus','公交'],['shared-bike','共享单车'],['taxi','网约车'],['rail','火车'],['flight','飞机'],['parking','停车'],['gas','加油'],['charging','充电'],
+    ['dining','餐饮'],['restaurant','正餐'],['fastfood','快餐'],['coffee','咖啡'],['takeout','外卖'],
+    ['shopping','购物'],['online','线上消费'],['supermarket','商超'],['convenience','便利店'],['mall','商场'],['electronics','数码家电'],
+    ['movie','电影'],['concert','演唱会'],['theatre','剧院演出'],['themepark','主题乐园'],['game','游戏'],['ktv','KTV'],['hotel','酒店住宿'],['travel','旅游']
+  ];
+  const families={
+    '餐饮':['dining','restaurant','fastfood','coffee','takeout'],
+    '餐饮美食':['dining','restaurant','fastfood','coffee','takeout'],
+    '美食':['dining','restaurant','fastfood','coffee','takeout'],
+    '交通出行':['subway','bus','shared-bike','taxi','rail','flight','parking','gas','charging'],
+    '公共交通':['subway','bus'],
+    '购物消费':['shopping','online','supermarket','convenience','mall','electronics'],
+    '娱乐休闲':['movie','concert','theatre','themepark','game','ktv'],
+    '旅游住宿':['hotel','travel']
+  };
+  const aliases={'地铁':'subway','轨道交通':'subway','公交车':'bus','公共汽车':'bus','餐饮美食':'dining','美食':'dining','购物消费':'shopping','电影票':'movie'};
+  function readCustom(){try{const a=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+  function catalog(){const a=base.concat(readCustom().map(x=>[x.value,x.label]));const seen=new Set();return a.filter(x=>x[0]&&x[1]&&!seen.has(String(x[0]))&&seen.add(String(x[0]))).map(x=>({value:String(x[0]),label:String(x[1])}));}
+  function render(){
+    const q=input.value.trim();
+    if(!q){box.innerHTML='';box.style.display='none';if(create)create.classList.add('hidden');if(hint)hint.textContent='输入场景关键词，匹配结果会显示在输入框下方。';return;}
+    const all=catalog(),low=q.toLocaleLowerCase(),normalized=aliases[q]||q;
+    let found=all.filter(x=>(x.label+' '+x.value).toLocaleLowerCase().includes(low));
+    const exact=all.find(x=>x.value===normalized||x.label.toLocaleLowerCase()===low);
+    if(exact&&!found.some(x=>x.value===exact.value))found.unshift(exact);
+    const family=families[q]||families[normalized];
+    if(family)family.forEach(id=>{const x=all.find(y=>y.value===id);if(x&&!found.some(y=>y.value===x.value))found.push(x)});
+    found=found.filter((x,i,a)=>a.findIndex(y=>y.value===x.value)===i).slice(0,10);
+    if(found.length){
+      box.innerHTML='<div class="scene-match-caption">匹配场景（点击选择）</div>'+found.map(x=>'<button type="button" class="scene-match-option" data-scene-value="'+x.value.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">'+x.label.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</button>').join('');
+      box.style.display='flex';if(create)create.classList.add('hidden');if(hint)hint.textContent='';
+    }else{box.innerHTML='';box.style.display='none';if(create)create.classList.remove('hidden');if(hint)hint.textContent='没有找到已有场景，可以创建此场景。';}
+  }
+  input.addEventListener('input',render);input.addEventListener('change',render);input.addEventListener('compositionend',render);input.addEventListener('focus',render);
+  box.addEventListener('click',function(e){const b=e.target.closest('button[data-scene-value]');if(!b)return;const x=catalog().find(y=>y.value===b.dataset.sceneValue);if(!x)return;input.value=x.label;render();input.dispatchEvent(new Event('change',{bubbles:true}));});
+  if(create)create.addEventListener('click',function(e){
+    e.preventDefault();e.stopImmediatePropagation();const label=input.value.trim();if(!label)return;
+    const items=readCustom();if(catalog().some(x=>x.label.toLocaleLowerCase()===label.toLocaleLowerCase())){render();return;}
+    items.push({value:'custom-scene-'+Date.now().toString(36),label});try{localStorage.setItem(KEY,JSON.stringify(items));}catch(err){alert('保存自定义场景失败，请检查浏览器存储权限。');return;}render();
+  },true);
+  render();
 })();
 </script>
 </body>
