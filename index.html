@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<title>消费优惠与用卡推荐 V2.21 测试版</title>
+<title>消费优惠与用卡推荐 V2.23 测试版</title>
 <style>
 :root{--primary:#0f766e;--primary2:#115e59;--bg:#f4f7f8;--line:#dfe7e8;--ink:#172b2b;--muted:#667779;--green:#dcfce7;--amber:#fff7d6;--red:#fee2e2}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
@@ -22,9 +22,9 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
 </style>
 </head>
 <body>
-<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V2.21 测试版<br>更新于 2026-11-04（UTC+8）</div></div></header>
+<header><div class="wrap"><div><h1>消费用卡优惠推荐</h1><p>独立工具 · 场景可搜索、自定义；按平台、支付渠道和场景匹配优惠</p></div><div class="version-stamp">版本 V2.23 测试版<br>更新于 2026-11-04（UTC+8）</div></div></header>
 <main class="wrap">
-<div class="notice"><details><summary>使用说明：数据保存在当前浏览器；首次使用请核对旧数据并导出备份。</summary><div class="notice-full">本工具数据保存在当前浏览器，不会自动同步到其他设备；消费推荐数据与周期任务等其他工具分开保存。V2.21 沿用原有存储键并兼容读取旧版数据，不会主动清空或重置已有规则、反馈和活动；升级前后建议先导出 JSON 备份。优惠规则可设置活动日期、每日时段和每日次数；累计达标活动可按活动期间、自然日、自然周或自然月统计；银行资产活动按每日余额测算月日均。内置的「支付宝超级出行卡」仅为示例，活动有效期及资格请以平台实际规则为准。积分只记录数量，不折算人民币；只有实际到账的现金返现计入收益。</div></details></div>
+<div class="notice"><details><summary>使用说明：数据保存在当前浏览器；首次使用请核对旧数据并导出备份。</summary><div class="notice-full">本工具数据保存在当前浏览器，不会自动同步到其他设备；消费推荐数据与周期任务等其他工具分开保存。V2.23 沿用原有存储键并兼容读取旧版数据，不会主动清空或重置已有规则、反馈和活动；升级前后建议先导出 JSON 备份。优惠规则可设置活动日期、每日时段和每日次数；累计达标活动可按活动期间、自然日、自然周或自然月统计；银行资产活动按每日余额测算月日均。内置的「支付宝超级出行卡」仅为示例，活动有效期及资格请以平台实际规则为准。积分只记录数量，不折算人民币；只有实际到账的现金返现计入收益。</div></details></div>
 <nav class="tabs">
 <button class="tab on" data-tab="recommend">场景推荐</button><button class="tab" data-tab="rules">优惠规则</button><button class="tab" data-tab="activities">累计达标活动</button><button class="tab" data-tab="assets">资产达标活动</button><button class="tab" data-tab="history">使用反馈</button><button class="tab" data-tab="data">数据备份</button>
 </nav>
@@ -559,7 +559,7 @@ const allSceneSelectIds=['scene','aScene','eScene'];
 function addSceneOption(sel,value,label){if(!sel||Array.from(sel.options).some(o=>o.value===value))return;const o=document.createElement('option');o.value=value;o.textContent=label;sel.appendChild(o);}
 function applySceneOptions(){
  const ids=['scene','aScene','eScene'];
- ids.forEach(id=>{const sel=$(id);if(!sel)return;const original=Array.from(sel.options);const any=original.find(o=>['any'].includes(o.value));const placeholder=original.find(o=>o.value==='');sel.innerHTML='';if(placeholder)sel.appendChild(placeholder);if(any)sel.appendChild(any);for(const [group,values] of Object.entries(SCENE_GROUPS)){values.forEach(v=>addSceneOption(sel,v,sceneNames[v]||v));}customScenes.forEach(c=>{sceneNames[c.value]=c.label;addSceneOption(sel,c.value,c.label);});original.forEach(o=>{if(!Array.from(sel.options).some(n=>n.value===o.value))sel.appendChild(o);});});
+ ids.forEach(id=>{const sel=$(id);if(!sel||!sel.options)return;const original=Array.from(sel.options);const any=original.find(o=>['any'].includes(o.value));const placeholder=original.find(o=>o.value==='');sel.innerHTML='';if(placeholder)sel.appendChild(placeholder);if(any)sel.appendChild(any);for(const [group,values] of Object.entries(SCENE_GROUPS)){values.forEach(v=>addSceneOption(sel,v,sceneNames[v]||v));}customScenes.forEach(c=>{sceneNames[c.value]=c.label;addSceneOption(sel,c.value,c.label);});original.forEach(o=>{if(!Array.from(sel.options).some(n=>n.value===o.value))sel.appendChild(o);});});
  ['platform','rPlatform','aPlatform','ePlatform','gaPlatform'].forEach(id=>{const sel=$(id);if(sel)customPlatforms.forEach(c=>{platformNames[c.value]=c.label;addSceneOption(sel,c.value,c.label);});});
  const group=$('rScenes');if(group){const checked=new Set(Array.from(group.querySelectorAll('input:checked')).map(x=>x.value));const wrap=group;const existing=new Set(Array.from(wrap.querySelectorAll('input[name="rSceneOption"]')).map(x=>x.value));for(const [g,values] of Object.entries(SCENE_GROUPS)){values.forEach(v=>{if(existing.has(v))return;const label=document.createElement('label');label.title=g;label.innerHTML='<input type="checkbox" name="rSceneOption" value="'+v+'"> '+(sceneNames[v]||v);wrap.appendChild(label);if(checked.has(v))label.querySelector('input').checked=true;});}customScenes.forEach(c=>{if(existing.has(c.value))return;const label=document.createElement('label');label.innerHTML='<input type="checkbox" name="rSceneOption" value="'+c.value+'"> '+c.label;wrap.appendChild(label);});}
  customChannels.forEach(c=>{channelNames[c.value]=c.label;['rChannel','aChannel','eChannel'].forEach(id=>{const rc=$(id);if(rc)addSceneOption(rc,c.value,c.label);});const ga=$('gaChannels');if(ga&&!Array.from(ga.querySelectorAll('input')).some(x=>x.value===c.value)){const label=document.createElement('label');label.innerHTML='<input type="checkbox" value="'+c.value+'">'+c.label;ga.appendChild(label);}});
@@ -829,7 +829,23 @@ fillActivityDatalist('aPlatformText','aPlatformOptions',customPlatforms,platform
 })();
 </script>
 <script>
-/* V2.21 独立场景匹配兜底：不依赖主应用 IIFE 是否成功完成初始化。 */
+/* V2.23 资产活动新增按钮兜底：即使主模块的 onclick 未成功绑定，也先确保表单可见。 */
+(function(){
+  const btn=document.getElementById('newAssetActivityBtn');
+  const form=document.getElementById('assetActivityForm');
+  if(!btn||!form)return;
+  btn.addEventListener('click',function(){
+    // 让主模块原有处理继续执行；此处只做可见性兜底，不清空已有数据。
+    form.classList.remove('form-collapsed');
+    requestAnimationFrame(function(){
+      form.classList.remove('form-collapsed');
+      form.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  },true);
+})();
+</script>
+<script>
+/* V2.23 独立场景匹配兜底：不依赖主应用 IIFE 是否成功完成初始化。 */
 (function(){
   const input=document.getElementById('sceneInput');
   const box=document.getElementById('sceneMatchOptions');
