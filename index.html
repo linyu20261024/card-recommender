@@ -897,5 +897,75 @@ fillActivityDatalist('aPlatformText','aPlatformOptions',customPlatforms,platform
   render();
 })();
 </script>
+
+<script>
+/* V2.24 资产区交互兜底：
+   仅在主应用没有成功绑定对应按钮时接管入口；不清理、不覆盖任何历史数据。 */
+(function () {
+  const $ = id => document.getElementById(id);
+  const reveal = (form, focusId) => {
+    if (!form) return;
+    form.classList.remove('form-collapsed');
+    form.style.setProperty('display', 'block', 'important');
+    form.setAttribute('aria-hidden', 'false');
+    if (focusId) {
+      const field = $(focusId);
+      if (field) setTimeout(() => field.focus({preventScroll:true}), 80);
+    }
+    setTimeout(() => {
+      form.classList.remove('form-collapsed');
+      form.style.setProperty('display', 'block', 'important');
+      form.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 0);
+  };
+  const activityBtn = $('newAssetActivityBtn');
+  const activityForm = $('assetActivityForm');
+  if (activityBtn && activityForm) {
+    activityBtn.addEventListener('click', function () {
+      // 如果主模块已绑定，它会负责重置表单和默认值；此处只兜底显示。
+      setTimeout(() => reveal(activityForm, 'assetBank'), 0);
+    }, true);
+  }
+
+  const entryBtn = $('newAssetEntryBtn');
+  const entryForm = $('assetEntryForm');
+  if (entryBtn && entryForm) {
+    entryBtn.addEventListener('click', function () {
+      setTimeout(() => {
+        const select = $('assetEntryActivity');
+        if (select && select.options.length > 1) {
+          if (!($('assetEntryDate') || {}).value && $('assetEntryDate')) {
+            $('assetEntryDate').value = (() => { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })();
+          }
+          reveal(entryForm, 'assetEntryActivity');
+        }
+      }, 0);
+    }, true);
+  }
+
+  // 取消按钮的兜底只负责收起，不触碰数据。
+  const cancelActivity = $('cancelAssetActivityBtn');
+  if (cancelActivity && activityForm) {
+    cancelActivity.addEventListener('click', () => {
+      setTimeout(() => {
+        activityForm.classList.add('form-collapsed');
+        activityForm.style.removeProperty('display');
+        activityForm.setAttribute('aria-hidden', 'true');
+      }, 0);
+    }, true);
+  }
+  const cancelEntry = $('cancelAssetEntryBtn');
+  if (cancelEntry && entryForm) {
+    cancelEntry.addEventListener('click', () => {
+      setTimeout(() => {
+        entryForm.classList.add('form-collapsed');
+        entryForm.style.removeProperty('display');
+        entryForm.setAttribute('aria-hidden', 'true');
+      }, 0);
+    }, true);
+  }
+})();
+</script>
+
 </body>
 </html>
