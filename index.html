@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<title>消费优惠与用卡推荐 V2.23 测试版</title>
+<title>消费优惠与用卡推荐 V2.25 测试版</title>
 <style>
 :root{--primary:#0f766e;--primary2:#115e59;--bg:#f4f7f8;--line:#dfe7e8;--ink:#172b2b;--muted:#667779;--green:#dcfce7;--amber:#fff7d6;--red:#fee2e2}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif}
@@ -151,7 +151,7 @@ header{background:linear-gradient(135deg,#115e59,#0f766e);color:#fff;padding:20p
     <div class="field"><label for="assetEntryAmount">当日金融资产总额（元） *</label><input id="assetEntryAmount" type="number" min="0" step="0.01" required placeholder="存款+符合口径的理财、基金等"></div>
     <div class="field"><label for="assetEntryNotes">备注</label><input id="assetEntryNotes" placeholder="可记录余额构成或特殊变动"></div>
    </div>
-   <div class="actions"><button class="primary" type="submit">保存每日资产</button><button class="secondary" type="button" id="cancelAssetEntryBtn">取消</button></div>
+   <div class="actions"><button class="primary" type="button" id="saveAssetEntryBtn">保存每日资产</button><button class="secondary" type="button" id="cancelAssetEntryBtn">取消</button></div>
    <div id="assetEntryStatus" class="status"></div>
   </form>
  </div>
@@ -303,6 +303,120 @@ const ARCHIVE_KEY='card-recommender-v2-archived-ui';
 function getArchivedIds(){try{return JSON.parse(localStorage.getItem(ARCHIVE_KEY)||'[]').filter(x=>typeof x==='string');}catch(_){return [];}}
 function setArchivedIds(ids){localStorage.setItem(ARCHIVE_KEY,JSON.stringify([...new Set(ids)]));}
 function save(){state.lastUpdated=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+// ===== 银行金融资产月日均活动模块（V2.5） =====
+let assetTierDraft=[];
+function assetMonthDays(month){if(!month)return 0;const [y,m]=month.split('-').map(Number);return new Date(y,m,0).getDate();}
+function assetMoney(n){return '¥'+(Number(n)||0).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function assetTierEditor(){
+ const root=$('assetTiersEditor');if(!root)return;
+ root.innerHTML=assetTierDraft.map((t,i)=>`<div class="rule-item"><div class="grid"><div class="field"><label>月日均门槛（元）</label><input type="number" min="0" step="0.01" data-tier="threshold" data-i="${i}" value="${escAttr(t.threshold??'')}" placeholder="例如 100000"></div><div class="field"><label>奖励类型</label><select data-tier="rewardType" data-i="${i}"><option value="cash" ${t.rewardType==='cash'?'selected':''}>现金 / 立减金（元）</option><option value="points" ${t.rewardType==='points'?'selected':''}>积分（数量）</option><option value="other" ${t.rewardType==='other'?'selected':''}>其他权益</option></select></div><div class="field"><label>奖励金额 / 数量</label><input type="number" min="0" step="0.01" data-tier="reward" data-i="${i}" value="${escAttr(t.reward??'')}" placeholder="填写奖励"></div><div class="field"><label>奖励说明</label><input data-tier="label" data-i="${i}" value="${escAttr(t.label||'')}" placeholder="例如 50元微信立减金 / 贵宾权益"></div></div><div class="actions"><button type="button" class="danger small" data-tier-del="${i}">删除此档</button></div></div>`).join('')||'<div class="empty">请至少添加一个奖励档位。</div>';
+ root.querySelectorAll('[data-tier]').forEach(el=>el.addEventListener('change',()=>{const i=Number(el.dataset.i),k=el.dataset.tier;assetTierDraft[i][k]=el.value;}));
+ root.querySelectorAll('[data-tier-del]').forEach(b=>b.onclick=()=>{assetTierDraft.splice(Number(b.dataset.tierDel),1);assetTierEditor();});
+}
+function clearAssetActivityForm(){
+ $('assetActivityForm').reset();$('assetActivityId').value='';$('assetBaseline').value='0';$('assetMonth').value=todayLocal().slice(0,7);$('assetStart').value=$('assetMonth').value+'-01';$('assetEnd').value=$('assetMonth').value+'-'+String(assetMonthDays($('assetMonth').value)).padStart(2,'0');assetTierDraft=[];assetTierEditor();$('assetActivityForm').classList.add('form-collapsed');
+}
+function clearAssetEntryForm(){ $('assetEntryForm').reset();$('assetEntryId').value='';$('assetEntryDate').value=todayLocal();$('assetEntryForm').classList.add('form-collapsed');}
+function refreshAssetActivityChoices(){
+ const sel=$('assetEntryActivity');if(!sel)return;const old=sel.value;
+ sel.innerHTML='<option value="">请选择活动</option>'+(state.bankAssetActivities||[]).map(a=>`<option value="${escAttr(a.id)}">${esc(a.bank)} · ${esc(a.month)}</option>`).join('');
+ if((state.bankAssetActivities||[]).some(a=>a.id===old))sel.value=old;
+}
+function assetDailySeries(a){
+ const startDay=Math.max(1,Number((a.start||a.month+'-01').slice(8,10))),endDay=Math.min(assetMonthDays(a.month),Number((a.end||a.month+'-'+assetMonthDays(a.month)).slice(8,10)));
+ const today=todayLocal(),monthNow=today.slice(0,7);
+ const elapsedEnd=a.month<monthNow?endDay:a.month>monthNow?startDay-1:Math.min(endDay,Number(today.slice(8,10)));
+ const elapsedDays=Math.max(0,elapsedEnd-startDay+1),totalDays=endDay-startDay+1;
+ const entries=(state.bankAssetEntries||[]).filter(e=>e.activityId===a.id&&e.date>=a.start&&e.date<=a.end&&e.date<=today).sort((x,y)=>x.date.localeCompare(y.date));
+ const byDate=new Map(entries.map(e=>[e.date,Number(e.amount)||0]));
+ let sum=0;const values=[];
+ for(let d=startDay;d<=elapsedEnd;d++){const date=a.month+'-'+String(d).padStart(2,'0');const v=byDate.has(date)?byDate.get(date):0;sum+=v;values.push(v);}
+ const baseline=Math.max(0,Number(a.baseline)||0);
+ const avg=elapsedDays?sum/elapsedDays:0;
+ const avgIncrease=avg-baseline;
+ const remainingDays=Math.max(0,totalDays-elapsedDays);
+ return {values,knownDays:entries.length,unknownDays:0,sum,avg,avgIncrease,baseline,days:totalDays,elapsedDays,remainingDays,entries};
+}
+function assetRequiredFuture(a,series,threshold){
+ if(series.remainingDays===0)return {value:null,remain:0,elapsed:series.elapsedDays,reason:'统计期已结束或已无剩余天数'};
+ // 档位 threshold 表示相对基准值的月日均增量，故总目标余额日均 = baseline + threshold。
+ return {value:((series.baseline+threshold)*series.days-series.sum)/series.remainingDays,remain:series.remainingDays,elapsed:series.elapsedDays};
+}
+function assetTierLabel(t){return t.rewardType==='cash'?assetMoney(t.reward):t.rewardType==='points'?`${Number(t.reward)||0} 积分`:t.label||'其他权益';}
+function renderAssetActivities(){
+ const root=$('assetActivityList');if(!root)return;
+ if(!(state.bankAssetActivities||[]).length){root.innerHTML='<div class="empty">暂无资产达标活动。点击“新增资产活动”创建一条活动，并在活动下设置多个奖励档位。</div>';return;}
+ root.innerHTML=state.bankAssetActivities.map(a=>{
+  const s=assetDailySeries(a),tiers=(a.tiers||[]).slice().sort((x,y)=>Number(x.threshold)-Number(y.threshold));
+  const targetReached=tiers.filter(t=>s.avgIncrease>=Number(t.threshold));
+  const next=tiers.find(t=>s.avgIncrease<Number(t.threshold));
+  const proj=next?assetRequiredFuture(a,s,Number(next.threshold)):null;
+  const avgText=s.elapsedDays?assetMoney(s.avgIncrease):'暂无可计算数据';
+  const nextText=!next?'已达到全部档位':proj?.value!==null&&proj?.value!==undefined?`剩余 ${proj.remain} 天平均需维持 ${assetMoney(Math.max(0,proj.value))}`:proj?.reason||'暂无法测算';
+  return `<article class="rule-item"><div class="section-heading"><div><strong>${esc(a.bank)}</strong><div class="muted">${esc(a.month)} · ${esc(a.start)} 至 ${esc(a.end)}</div></div><div class="actions"><button class="secondary small" data-asset-edit="${escAttr(a.id)}">编辑</button><button class="danger small" data-asset-del="${escAttr(a.id)}">删除</button></div></div><div class="muted">资产口径：${esc(a.scope)}</div><div class="stats"><div class="stat"><span>当前截至目前月日均</span><strong>${avgText}</strong></div><div class="stat"><span>已记录 / 已过统计天数</span><strong>${s.knownDays} / ${s.elapsedDays}</strong></div><div class="stat"><span>当前已达到档位</span><strong>${targetReached.length}</strong></div><div class="stat"><span>下一档增量门槛</span><strong>${next?assetMoney(next.threshold):'—'}</strong></div></div><div class="reason"><strong>下一档测算：</strong>${esc(nextText)}</div><div class="reason"><strong>奖励档位：</strong>${tiers.map(t=>`${assetMoney(t.threshold)} → ${esc(assetTierLabel(t))}`).join('；')||'未设置'} </div>${esc(a.notes||'')}</article>`;
+ }).join('');
+ root.querySelectorAll('[data-asset-edit]').forEach(b=>b.onclick=()=>editAssetActivity(b.dataset.assetEdit));
+ root.querySelectorAll('[data-asset-del]').forEach(b=>b.onclick=()=>{if(!confirm('删除该资产活动？其每日资产记录也会一并删除。'))return;state.bankAssetActivities=state.bankAssetActivities.filter(a=>a.id!==b.dataset.assetDel);state.bankAssetEntries=state.bankAssetEntries.filter(e=>e.activityId!==b.dataset.assetDel);save();renderAssetActivities();renderAssetEntries();refreshAssetActivityChoices();});
+}
+function editAssetActivity(id){
+ const a=state.bankAssetActivities.find(x=>x.id===id);if(!a)return;
+ $('assetActivityForm').classList.remove('form-collapsed');$('assetActivityId').value=a.id;$('assetBank').value=a.bank;$('assetMonth').value=a.month;$('assetStart').value=a.start;$('assetEnd').value=a.end;$('assetBaseline').value=Number(a.baseline)||0;$('assetScope').value=a.scope;$('assetNotes').value=a.notes||'';assetTierDraft=JSON.parse(JSON.stringify(a.tiers||[]));assetTierEditor();$('assetActivityForm').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderAssetEntries(){
+ const root=$('assetEntryRows');if(!root)return;const entries=(state.bankAssetEntries||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+ root.innerHTML=entries.map(e=>{const a=state.bankAssetActivities.find(x=>x.id===e.activityId);return `<tr><td>${esc(e.date)}</td><td>${esc(a?.bank||'（活动已删除）')}</td><td>${assetMoney(e.amount)}</td><td>${esc(e.notes||'')}</td><td><button class="secondary small" data-asset-entry-edit="${escAttr(e.id)}">编辑</button> <button class="danger small" data-asset-entry-del="${escAttr(e.id)}">删除</button></td></tr>`}).join('');
+ $('assetEntryEmpty').classList.toggle('hidden',entries.length>0);
+ root.querySelectorAll('[data-asset-entry-edit]').forEach(b=>b.onclick=()=>{const e=state.bankAssetEntries.find(x=>x.id===b.dataset.assetEntryEdit);if(!e)return;$('assetEntryForm').classList.remove('form-collapsed');$('assetEntryId').value=e.id;$('assetEntryActivity').value=e.activityId;$('assetEntryDate').value=e.date;$('assetEntryAmount').value=e.amount;$('assetEntryNotes').value=e.notes||'';});
+ root.querySelectorAll('[data-asset-entry-del]').forEach(b=>b.onclick=()=>{if(confirm('删除这条每日资产记录？')){state.bankAssetEntries=state.bankAssetEntries.filter(e=>e.id!==b.dataset.assetEntryDel);save();renderAssetActivities();renderAssetEntries();}});
+}
+$('newAssetActivityBtn').onclick=()=>{$('assetActivityForm').classList.remove('form-collapsed');clearAssetActivityForm();$('assetActivityForm').classList.remove('form-collapsed');$('assetActivityForm').scrollIntoView({behavior:'smooth',block:'start'});};
+$('addAssetTierBtn').onclick=()=>{assetTierDraft.push({threshold:'',rewardType:'cash',reward:'',label:''});assetTierEditor();};
+$('cancelAssetActivityBtn').onclick=clearAssetActivityForm;
+$('assetMonth').addEventListener('change',()=>{const m=$('assetMonth').value;if(m){$('assetStart').value=m+'-01';$('assetEnd').value=m+'-'+String(assetMonthDays(m)).padStart(2,'0');}});
+$('assetActivityForm').onsubmit=e=>{
+ e.preventDefault();const id=$('assetActivityId').value||uid();
+ const a={id,bank:$('assetBank').value.trim(),month:$('assetMonth').value,start:$('assetStart').value,end:$('assetEnd').value,baseline:Number($('assetBaseline').value),scope:$('assetScope').value.trim(),notes:$('assetNotes').value.trim(),tiers:assetTierDraft.map(t=>({...t,threshold:Number(t.threshold),reward:Number(t.reward)})).sort((x,y)=>x.threshold-y.threshold)};
+ const st=$('assetActivityStatus');
+ if(!a.bank||!a.month||!a.start||!a.end||a.end<a.start||a.start.slice(0,7)!==a.month||a.end.slice(0,7)!==a.month||!a.scope||!Number.isFinite(a.baseline)||a.baseline<0){st.textContent='请填写活动名称、同一月份内的统计日期、非负基准值及资产口径。';st.className='status bad';return;}
+ if(!a.tiers.length||a.tiers.some(t=>!Number.isFinite(t.threshold)||t.threshold<=0||!Number.isFinite(t.reward)||t.reward<0)){st.textContent='请至少添加一个有效档位，门槛必须大于0，奖励不能为负数。';st.className='status bad';return;}
+ if(new Set(a.tiers.map(t=>t.threshold)).size!==a.tiers.length){st.textContent='奖励档位的月日均门槛不能重复。';st.className='status bad';return;}
+ const ix=state.bankAssetActivities.findIndex(x=>x.id===id);if(ix<0)state.bankAssetActivities.push(a);else state.bankAssetActivities[ix]=a;
+ save();clearAssetActivityForm();refreshAssetActivityChoices();renderAssetActivities();st.textContent='资产活动已保存。';st.className='status ok';
+};
+$('newAssetEntryBtn').onclick=()=>{refreshAssetActivityChoices();if(!state.bankAssetActivities.length){alert('请先创建银行资产达标活动。');return;}clearAssetEntryForm();$('assetEntryForm').classList.remove('form-collapsed');$('assetEntryForm').scrollIntoView({behavior:'smooth',block:'start'});};
+$('cancelAssetEntryBtn').onclick=clearAssetEntryForm;
+function saveAssetEntry(){
+ const st=$('assetEntryStatus');
+ try {
+  const id=$('assetEntryId').value||uid(),activityId=$('assetEntryActivity').value,date=$('assetEntryDate').value,rawAmount=$('assetEntryAmount').value,amount=Number(rawAmount),notes=$('assetEntryNotes').value.trim(),a=state.bankAssetActivities.find(x=>x.id===activityId);
+  if(!a||!date||date<a.start||date>a.end||date.slice(0,7)!==a.month||rawAmount.trim()===''||!Number.isFinite(amount)||amount<0){st.textContent='请选择活动统计期内的日期，并填写有效的非负资产余额。';st.className='status bad';return false;}
+  const previous=(state.bankAssetEntries||[]).slice();
+  const entry={id,activityId,date,amount,notes};
+  const same=state.bankAssetEntries.findIndex(x=>x.activityId===activityId&&x.date===date&&x.id!==id);
+  if(same>=0)state.bankAssetEntries.splice(same,1);
+  const ix=state.bankAssetEntries.findIndex(x=>x.id===id);
+  if(ix>=0)state.bankAssetEntries[ix]=entry;else state.bankAssetEntries.push(entry);
+  try {
+   save();
+   const persisted=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+   if(!persisted||!Array.isArray(persisted.bankAssetEntries)||!persisted.bankAssetEntries.some(x=>x.id===id&&x.activityId===activityId&&x.date===date&&Number(x.amount)===amount)) throw new Error('保存后无法从本地存储读取到这条记录');
+  } catch(storageError) {
+   state.bankAssetEntries=previous;
+   throw storageError;
+  }
+  $('assetEntryId').value='';$('assetEntryAmount').value='';$('assetEntryNotes').value='';$('assetEntryDate').value=todayLocal();
+  try {renderAssetActivities();renderAssetEntries();} catch(renderError) {console.error('每日资产已保存，但刷新列表时出错',renderError);}
+  st.textContent='每日资产余额已保存；同一活动同一天只按一条记录计算。';st.className='status ok';
+  return true;
+ } catch(err) {
+  st.textContent='保存失败：'+(err&&err.message?err.message:'浏览器存储异常')+'。请先导出备份，不要清理浏览器数据。';st.className='status bad';
+  console.error('每日资产保存失败',err);
+  return false;
+ }
+}
+$('assetEntryForm').addEventListener('submit',e=>{e.preventDefault();e.stopPropagation();saveAssetEntry();});
+const assetEntrySaveButton=$('saveAssetEntryBtn');
+if(assetEntrySaveButton){assetEntrySaveButton.type='button';assetEntrySaveButton.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();saveAssetEntry();});}
 function switchTab(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='panel-'+name));if(name==='rules')renderRules();if(name==='activities'){renderActivities();renderSpendRecords();renderActivityChoices();renderDailyRewardChoices();renderDailyRewardRows();renderGenericActivities();}if(name==='history')renderHistory();if(name==='recommend')renderRecommendations();if(name==='assets'){renderAssetActivities();renderAssetEntries();refreshAssetActivityChoices();}}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
 $('when').value=nowLocal();
@@ -699,98 +813,7 @@ function openNewAccumulationActivity(){
  setTimeout(()=>$('aName').focus({preventScroll:true}),250);
 }
 
-// ===== 银行金融资产月日均活动模块（V2.5） =====
-let assetTierDraft=[];
-function assetMonthDays(month){if(!month)return 0;const [y,m]=month.split('-').map(Number);return new Date(y,m,0).getDate();}
-function assetMoney(n){return '¥'+(Number(n)||0).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function assetTierEditor(){
- const root=$('assetTiersEditor');if(!root)return;
- root.innerHTML=assetTierDraft.map((t,i)=>`<div class="rule-item"><div class="grid"><div class="field"><label>月日均门槛（元）</label><input type="number" min="0" step="0.01" data-tier="threshold" data-i="${i}" value="${escAttr(t.threshold??'')}" placeholder="例如 100000"></div><div class="field"><label>奖励类型</label><select data-tier="rewardType" data-i="${i}"><option value="cash" ${t.rewardType==='cash'?'selected':''}>现金 / 立减金（元）</option><option value="points" ${t.rewardType==='points'?'selected':''}>积分（数量）</option><option value="other" ${t.rewardType==='other'?'selected':''}>其他权益</option></select></div><div class="field"><label>奖励金额 / 数量</label><input type="number" min="0" step="0.01" data-tier="reward" data-i="${i}" value="${escAttr(t.reward??'')}" placeholder="填写奖励"></div><div class="field"><label>奖励说明</label><input data-tier="label" data-i="${i}" value="${escAttr(t.label||'')}" placeholder="例如 50元微信立减金 / 贵宾权益"></div></div><div class="actions"><button type="button" class="danger small" data-tier-del="${i}">删除此档</button></div></div>`).join('')||'<div class="empty">请至少添加一个奖励档位。</div>';
- root.querySelectorAll('[data-tier]').forEach(el=>el.addEventListener('change',()=>{const i=Number(el.dataset.i),k=el.dataset.tier;assetTierDraft[i][k]=el.value;}));
- root.querySelectorAll('[data-tier-del]').forEach(b=>b.onclick=()=>{assetTierDraft.splice(Number(b.dataset.tierDel),1);assetTierEditor();});
-}
-function clearAssetActivityForm(){
- $('assetActivityForm').reset();$('assetActivityId').value='';$('assetBaseline').value='0';$('assetMonth').value=todayLocal().slice(0,7);$('assetStart').value=$('assetMonth').value+'-01';$('assetEnd').value=$('assetMonth').value+'-'+String(assetMonthDays($('assetMonth').value)).padStart(2,'0');assetTierDraft=[];assetTierEditor();$('assetActivityForm').classList.add('form-collapsed');
-}
-function clearAssetEntryForm(){ $('assetEntryForm').reset();$('assetEntryId').value='';$('assetEntryDate').value=todayLocal();$('assetEntryForm').classList.add('form-collapsed');}
-function refreshAssetActivityChoices(){
- const sel=$('assetEntryActivity');if(!sel)return;const old=sel.value;
- sel.innerHTML='<option value="">请选择活动</option>'+(state.bankAssetActivities||[]).map(a=>`<option value="${escAttr(a.id)}">${esc(a.bank)} · ${esc(a.month)}</option>`).join('');
- if((state.bankAssetActivities||[]).some(a=>a.id===old))sel.value=old;
-}
-function assetDailySeries(a){
- const startDay=Math.max(1,Number((a.start||a.month+'-01').slice(8,10))),endDay=Math.min(assetMonthDays(a.month),Number((a.end||a.month+'-'+assetMonthDays(a.month)).slice(8,10)));
- const today=todayLocal(),monthNow=today.slice(0,7);
- const elapsedEnd=a.month<monthNow?endDay:a.month>monthNow?startDay-1:Math.min(endDay,Number(today.slice(8,10)));
- const elapsedDays=Math.max(0,elapsedEnd-startDay+1),totalDays=endDay-startDay+1;
- const entries=(state.bankAssetEntries||[]).filter(e=>e.activityId===a.id&&e.date>=a.start&&e.date<=a.end&&e.date<=today).sort((x,y)=>x.date.localeCompare(y.date));
- const byDate=new Map(entries.map(e=>[e.date,Number(e.amount)||0]));
- let sum=0;const values=[];
- for(let d=startDay;d<=elapsedEnd;d++){const date=a.month+'-'+String(d).padStart(2,'0');const v=byDate.has(date)?byDate.get(date):0;sum+=v;values.push(v);}
- const baseline=Math.max(0,Number(a.baseline)||0);
- const avg=elapsedDays?sum/elapsedDays:0;
- const avgIncrease=avg-baseline;
- const remainingDays=Math.max(0,totalDays-elapsedDays);
- return {values,knownDays:entries.length,unknownDays:0,sum,avg,avgIncrease,baseline,days:totalDays,elapsedDays,remainingDays,entries};
-}
-function assetRequiredFuture(a,series,threshold){
- if(series.remainingDays===0)return {value:null,remain:0,elapsed:series.elapsedDays,reason:'统计期已结束或已无剩余天数'};
- // 档位 threshold 表示相对基准值的月日均增量，故总目标余额日均 = baseline + threshold。
- return {value:((series.baseline+threshold)*series.days-series.sum)/series.remainingDays,remain:series.remainingDays,elapsed:series.elapsedDays};
-}
-function assetTierLabel(t){return t.rewardType==='cash'?assetMoney(t.reward):t.rewardType==='points'?`${Number(t.reward)||0} 积分`:t.label||'其他权益';}
-function renderAssetActivities(){
- const root=$('assetActivityList');if(!root)return;
- if(!(state.bankAssetActivities||[]).length){root.innerHTML='<div class="empty">暂无资产达标活动。点击“新增资产活动”创建一条活动，并在活动下设置多个奖励档位。</div>';return;}
- root.innerHTML=state.bankAssetActivities.map(a=>{
-  const s=assetDailySeries(a),tiers=(a.tiers||[]).slice().sort((x,y)=>Number(x.threshold)-Number(y.threshold));
-  const targetReached=tiers.filter(t=>s.avgIncrease>=Number(t.threshold));
-  const next=tiers.find(t=>s.avgIncrease<Number(t.threshold));
-  const proj=next?assetRequiredFuture(a,s,Number(next.threshold)):null;
-  const avgText=s.elapsedDays?assetMoney(s.avgIncrease):'暂无可计算数据';
-  const nextText=!next?'已达到全部档位':proj?.value!==null&&proj?.value!==undefined?`剩余 ${proj.remain} 天平均需维持 ${assetMoney(Math.max(0,proj.value))}`:proj?.reason||'暂无法测算';
-  return `<article class="rule-item"><div class="section-heading"><div><strong>${esc(a.bank)}</strong><div class="muted">${esc(a.month)} · ${esc(a.start)} 至 ${esc(a.end)}</div></div><div class="actions"><button class="secondary small" data-asset-edit="${escAttr(a.id)}">编辑</button><button class="danger small" data-asset-del="${escAttr(a.id)}">删除</button></div></div><div class="muted">资产口径：${esc(a.scope)}</div><div class="stats"><div class="stat"><span>当前截至目前月日均</span><strong>${avgText}</strong></div><div class="stat"><span>已记录 / 已过统计天数</span><strong>${s.knownDays} / ${s.elapsedDays}</strong></div><div class="stat"><span>当前已达到档位</span><strong>${targetReached.length}</strong></div><div class="stat"><span>下一档增量门槛</span><strong>${next?assetMoney(next.threshold):'—'}</strong></div></div><div class="reason"><strong>下一档测算：</strong>${esc(nextText)}</div><div class="reason"><strong>奖励档位：</strong>${tiers.map(t=>`${assetMoney(t.threshold)} → ${esc(assetTierLabel(t))}`).join('；')||'未设置'} </div>${esc(a.notes||'')}</article>`;
- }).join('');
- root.querySelectorAll('[data-asset-edit]').forEach(b=>b.onclick=()=>editAssetActivity(b.dataset.assetEdit));
- root.querySelectorAll('[data-asset-del]').forEach(b=>b.onclick=()=>{if(!confirm('删除该资产活动？其每日资产记录也会一并删除。'))return;state.bankAssetActivities=state.bankAssetActivities.filter(a=>a.id!==b.dataset.assetDel);state.bankAssetEntries=state.bankAssetEntries.filter(e=>e.activityId!==b.dataset.assetDel);save();renderAssetActivities();renderAssetEntries();refreshAssetActivityChoices();});
-}
-function editAssetActivity(id){
- const a=state.bankAssetActivities.find(x=>x.id===id);if(!a)return;
- $('assetActivityForm').classList.remove('form-collapsed');$('assetActivityId').value=a.id;$('assetBank').value=a.bank;$('assetMonth').value=a.month;$('assetStart').value=a.start;$('assetEnd').value=a.end;$('assetBaseline').value=Number(a.baseline)||0;$('assetScope').value=a.scope;$('assetNotes').value=a.notes||'';assetTierDraft=JSON.parse(JSON.stringify(a.tiers||[]));assetTierEditor();$('assetActivityForm').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function renderAssetEntries(){
- const root=$('assetEntryRows');if(!root)return;const entries=(state.bankAssetEntries||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
- root.innerHTML=entries.map(e=>{const a=state.bankAssetActivities.find(x=>x.id===e.activityId);return `<tr><td>${esc(e.date)}</td><td>${esc(a?.bank||'（活动已删除）')}</td><td>${assetMoney(e.amount)}</td><td>${esc(e.notes||'')}</td><td><button class="secondary small" data-asset-entry-edit="${escAttr(e.id)}">编辑</button> <button class="danger small" data-asset-entry-del="${escAttr(e.id)}">删除</button></td></tr>`}).join('');
- $('assetEntryEmpty').classList.toggle('hidden',entries.length>0);
- root.querySelectorAll('[data-asset-entry-edit]').forEach(b=>b.onclick=()=>{const e=state.bankAssetEntries.find(x=>x.id===b.dataset.assetEntryEdit);if(!e)return;$('assetEntryForm').classList.remove('form-collapsed');$('assetEntryId').value=e.id;$('assetEntryActivity').value=e.activityId;$('assetEntryDate').value=e.date;$('assetEntryAmount').value=e.amount;$('assetEntryNotes').value=e.notes||'';});
- root.querySelectorAll('[data-asset-entry-del]').forEach(b=>b.onclick=()=>{if(confirm('删除这条每日资产记录？')){state.bankAssetEntries=state.bankAssetEntries.filter(e=>e.id!==b.dataset.assetEntryDel);save();renderAssetActivities();renderAssetEntries();}});
-}
-$('newAssetActivityBtn').onclick=()=>{$('assetActivityForm').classList.remove('form-collapsed');clearAssetActivityForm();$('assetActivityForm').classList.remove('form-collapsed');$('assetActivityForm').scrollIntoView({behavior:'smooth',block:'start'});};
-$('addAssetTierBtn').onclick=()=>{assetTierDraft.push({threshold:'',rewardType:'cash',reward:'',label:''});assetTierEditor();};
-$('cancelAssetActivityBtn').onclick=clearAssetActivityForm;
-$('assetMonth').addEventListener('change',()=>{const m=$('assetMonth').value;if(m){$('assetStart').value=m+'-01';$('assetEnd').value=m+'-'+String(assetMonthDays(m)).padStart(2,'0');}});
-$('assetActivityForm').onsubmit=e=>{
- e.preventDefault();const id=$('assetActivityId').value||uid();
- const a={id,bank:$('assetBank').value.trim(),month:$('assetMonth').value,start:$('assetStart').value,end:$('assetEnd').value,baseline:Number($('assetBaseline').value),scope:$('assetScope').value.trim(),notes:$('assetNotes').value.trim(),tiers:assetTierDraft.map(t=>({...t,threshold:Number(t.threshold),reward:Number(t.reward)})).sort((x,y)=>x.threshold-y.threshold)};
- const st=$('assetActivityStatus');
- if(!a.bank||!a.month||!a.start||!a.end||a.end<a.start||a.start.slice(0,7)!==a.month||a.end.slice(0,7)!==a.month||!a.scope||!Number.isFinite(a.baseline)||a.baseline<0){st.textContent='请填写活动名称、同一月份内的统计日期、非负基准值及资产口径。';st.className='status bad';return;}
- if(!a.tiers.length||a.tiers.some(t=>!Number.isFinite(t.threshold)||t.threshold<=0||!Number.isFinite(t.reward)||t.reward<0)){st.textContent='请至少添加一个有效档位，门槛必须大于0，奖励不能为负数。';st.className='status bad';return;}
- if(new Set(a.tiers.map(t=>t.threshold)).size!==a.tiers.length){st.textContent='奖励档位的月日均门槛不能重复。';st.className='status bad';return;}
- const ix=state.bankAssetActivities.findIndex(x=>x.id===id);if(ix<0)state.bankAssetActivities.push(a);else state.bankAssetActivities[ix]=a;
- save();clearAssetActivityForm();refreshAssetActivityChoices();renderAssetActivities();st.textContent='资产活动已保存。';st.className='status ok';
-};
-$('newAssetEntryBtn').onclick=()=>{refreshAssetActivityChoices();if(!state.bankAssetActivities.length){alert('请先创建银行资产达标活动。');return;}clearAssetEntryForm();$('assetEntryForm').classList.remove('form-collapsed');$('assetEntryForm').scrollIntoView({behavior:'smooth',block:'start'});};
-$('cancelAssetEntryBtn').onclick=clearAssetEntryForm;
-$('assetEntryForm').onsubmit=e=>{
- e.preventDefault();const id=$('assetEntryId').value||uid(),activityId=$('assetEntryActivity').value,date=$('assetEntryDate').value,amount=Number($('assetEntryAmount').value),notes=$('assetEntryNotes').value.trim(),a=state.bankAssetActivities.find(x=>x.id===activityId),st=$('assetEntryStatus');
- if(!a||!date||date<a.start||date>a.end||date.slice(0,7)!==a.month||!Number.isFinite(amount)||amount<0){st.textContent='请选择活动统计期内的日期，并填写有效的非负资产余额。';st.className='status bad';return;}
- const entry={id,activityId,date,amount,notes};const ix=state.bankAssetEntries.findIndex(x=>x.id===id);
- // 同一活动同一天仅保留一条余额，重复日期保存时覆盖旧值，避免重复计入日均。
- const same=state.bankAssetEntries.findIndex(x=>x.activityId===activityId&&x.date===date&&x.id!==id);
- if(same>=0)state.bankAssetEntries.splice(same,1);
- if(ix>=0)state.bankAssetEntries[ix]=entry;else state.bankAssetEntries.push(entry);
- save();clearAssetEntryForm();renderAssetActivities();renderAssetEntries();st.textContent='每日资产余额已保存；同一活动同一天只按一条记录计算。';st.className='status ok';
-};
+
 
 
 function fillActivityDatalist(inputId,listId,catalog,names){
@@ -899,7 +922,7 @@ fillActivityDatalist('aPlatformText','aPlatformOptions',customPlatforms,platform
 </script>
 
 <script>
-/* V2.24 资产区交互兜底：
+/* V2.25 小米浏览器每日资产保存修复：
    仅在主应用没有成功绑定对应按钮时接管入口；不清理、不覆盖任何历史数据。 */
 (function () {
   const $ = id => document.getElementById(id);
